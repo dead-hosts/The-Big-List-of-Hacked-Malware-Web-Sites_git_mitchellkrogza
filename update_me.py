@@ -132,6 +132,9 @@ class Settings(object):  # pylint: disable=too-few-public-methods
     # Note: DO NOT TOUCH UNLESS YOU KNOW WHAT IT MEANS!
     permanent_license_link = 'https://raw.githubusercontent.com/dead-hosts/repository-structure/master/LICENSE'  # pylint: disable=line-too-long
 
+    # This variable is used to set the arguments when executing PyFunceble.py
+    arguments = []
+
 
 class Initiate(object):
     """
@@ -330,6 +333,23 @@ class Initiate(object):
         else:
             return True
 
+    @classmethod
+    def _construct_arguments(cls):
+        """
+        Construct the arguments to pass to PyFunceble.
+        """
+
+        result = ""
+
+        if Settings.arguments != []:
+            for argument in Settings.arguments:
+                if argument != Settings.arguments[-1]:
+                    result += argument + ' '
+                else:
+                    result += argument
+
+        return result
+
     def PyFunceble(self):  # pylint: disable=invalid-name
         """
         Install and run PyFunceble.
@@ -340,16 +360,21 @@ class Initiate(object):
         PyFunceble_path = Settings.current_directory + \
             'PyFunceble.py'
 
+        if Settings.stable:
+            status = ''
+        else:
+            status = '--dev'
+
         command_to_execute = 'sudo python3 %s --dev -u && ' % (tool_path)
         command_to_execute += 'python3 %s -v && ' % (tool_path)
         command_to_execute += 'export TRAVIS_BUILD_DIR=%s && ' % environ['TRAVIS_BUILD_DIR']
         command_to_execute += 'python3 %s -q --directory-structure && ' % (
             tool_path)
-        command_to_execute += 'sudo python3 %s --dev --autosave-minutes %s --commit-autosave-message "[Autosave] %s" --commit-results-message "[Results] %s" -i && ' % (  # pylint: disable=line-too-long
-            tool_path, Settings.autosave_minutes, Settings.commit_autosave_message, Settings.commit_autosave_message)  # pylint: disable=line-too-long
+        command_to_execute += 'sudo python3 %s %s --autosave-minutes %s --commit-autosave-message "[Autosave] %s" --commit-results-message "[Results] %s" -i && ' % (  # pylint: disable=line-too-long
+            tool_path, status, Settings.autosave_minutes, Settings.commit_autosave_message, Settings.commit_autosave_message)  # pylint: disable=line-too-long
         command_to_execute += 'python3 %s -v && ' % (PyFunceble_path)
-        command_to_execute += 'sudo python3 %s --travis -a -ex --plain --split -t 2 -f %s' % (
-            PyFunceble_path, Settings.file_to_test)
+        command_to_execute += 'sudo python3 %s %s -f %s' % (
+            PyFunceble_path, self._construct_arguments(), Settings.file_to_test)
 
         if self.allow_test():
 
