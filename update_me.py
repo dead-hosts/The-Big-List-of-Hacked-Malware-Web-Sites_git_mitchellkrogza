@@ -133,6 +133,9 @@ class Settings(object):  # pylint: disable=too-few-public-methods
     permanent_license_link = 'https://raw.githubusercontent.com/dead-hosts/repository-structure/master/LICENSE'  # pylint: disable=line-too-long
 
     # This variable is used to set the arguments when executing PyFunceble.py
+    #
+    # Note: DO NOT TOUCH UNLESS YOU KNOW WHAT IT MEANS!
+    # Note: This variable is auto updated by Initiate()
     arguments = []
 
 
@@ -414,7 +417,7 @@ class Initiate(object):
 
             Helpers.Command(
                 "git add --all && git commit -a -m '%s' && git push origin master" %
-                commit_message).execute()
+                commit_message, False).execute()
         else:
             print("No need to test until %s." % ctime(
                 Settings.last_test + (24 * Settings.days_until_next_test * 3600)))
