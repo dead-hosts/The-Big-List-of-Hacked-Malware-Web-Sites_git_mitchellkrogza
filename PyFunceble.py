@@ -151,6 +151,8 @@ class Settings(object):  # pylint: disable=too-few-public-methods
     to_filter = ''
     # Activation/Deactivation of Travis CI autosave system.
     travis = False
+    # This tell us in which branch we have to push
+    travis_branch = 'master'
     # Minimum of minutes before we start commiting to upstream under Travis CI.
     travis_autosave_minutes = 10
     # Default travis final commit message
@@ -389,6 +391,7 @@ class Settings(object):  # pylint: disable=too-few-public-methods
             'percentage': 'https://git.io/v7xtP',
             'plain_list_domain': 'Unknown',
             'quiet': 'Unknown',
+            'share_logs': 'Unknown',
             'simple': 'Unknown',
             'split_files': 'Unknown',
             'travis': 'Unknown'
@@ -542,7 +545,7 @@ class PyFunceble(object):
 
         for string in separation:
             if string in extracted_domain:
-                result = extracted_domain.split('#')[0]
+                result = extracted_domain.split('#')[0].strip()
                 return result.split(string)[-1]
 
         return extracted_domain
@@ -752,7 +755,9 @@ class AutoSave(object):
                     Helpers.Command(command %
                                     Settings.travis_autosave_commit).execute()
 
-                Helpers.Command('git push origin master').execute()
+                Helpers.Command(
+                    'git push origin %s' %
+                    Settings.travis_branch).execute()
                 exit(0)
             return
         except AttributeError:
@@ -1001,53 +1006,35 @@ class Prints(object):
         self.data_to_print = to_print
         self.only_on_file = only_on_file
 
-        self.headers = {
-            'Generic': {
-                'Domain': 100,
-                'Status': 11,
-                'Expiration Date': 17,
-                'Source': 10,
-                'HTTP Code': 10,
-                'Analyze Date': 20
-            },
-            Settings.official_up_status: {
-                'Domain': 100,
-                'Expiration Date': 17,
-                'Source': 10,
-                'HTTP Code': 10,
-                'Analyze Date': 20
-            },
-            Settings.official_down_status: {
-                'Domain': 100,
-                'WHOIS Server': 35,
-                'Status': 11,
-                'Source': 10,
-                'HTTP Code': 10,
-                'Analyze Date': 20
-            },
-            Settings.official_invalid_status: {
-                'Domain': 100,
-                'Source': 10,
-                'HTTP Code': 10,
-                'Analyze Date': 20
-            },
-            'Less': {
-                'Domain': 100,
-                'Status': 11,
-                'HTTP Code': 10
-            },
-            'Percentage': {
-                'Status': 11,
-                'Percentage': 12,
-                'Numbers': 12
-            },
-            'HTTP': {
-                'Domain': 100,
-                'Status': 11,
-                'HTTP Code': 10,
-                'Analyze Date': 20
-            }
-        }
+        self.headers = OrderedDict()
+
+        self.headers['Generic'] = OrderedDict(zip(
+            ['Domain', 'Status', 'Expiration Date', 'Source', 'HTTP Code', 'Analyze Date'],
+            [100, 11, 17, 10, 10, 20]))
+
+        self.headers[Settings.official_up_status] = OrderedDict(zip(
+            ['Domain', 'Expiration Date', 'Source', 'HTTP Code', 'Analyze Date'],
+            [100, 17, 10, 10, 20]))
+
+        self.headers[Settings.official_down_status] = OrderedDict(zip(
+            ['Domain', 'WHOIS Server', 'Status', 'Source', 'HTTP Code', 'Analyze Date'],
+            [100, 35, 11, 10, 10, 20]))
+
+        self.headers[Settings.official_invalid_status] = OrderedDict(zip(
+            ['Domain', 'Source', 'HTTP Code', 'Analyze Date'],
+            [100, 10, 10, 20]))
+
+        self.headers['Less'] = OrderedDict(zip(
+            ['Domain', 'Status', 'HTTP Code'],
+            [100, 11, 10]))
+
+        self.headers['Percentage'] = OrderedDict(zip(
+            ['Status', 'Percentage', 'Numbers'],
+            [11, 12, 12]))
+
+        self.headers['HTTP'] = OrderedDict(zip(
+            ['Domain', 'Status', 'HTTP Code', 'Analyze Date'],
+            [100, 11, 10, 20]))
 
         self.currently_used_header = {}
 
@@ -1060,7 +1047,7 @@ class Prints(object):
         if not Settings.no_files \
             and self.output is not None \
                 and self.output != '' \
-        and not path.isfile(self.output):
+            and not path.isfile(self.output):
             link = ("# File generated with %s\n" % Settings.link_to_repo)
             date_of_generation = (
                 "# Date of generation: %s \n\n" %
@@ -1801,13 +1788,27 @@ class Referer(object):
         self.ignored_extension = [
             'ad',
             'al',
+            'an',
             'ao',
+            'aq',
             'arpa',
             'az',
             'ba',
             'bb',
             'bd',
+            'bf',
+            'bh',
+            'bl',
+            'bq',
             'bs',
+            'bt',
+            'bv',
+            'cg',
+            'ck',
+            'cu',
+            'cv',
+            'cw',
+            'cy',
             'eg',
             'et',
             'fm',
@@ -1819,6 +1820,7 @@ class Referer(object):
             'lb',
             'mil',
             'mt',
+            'ne',
             'ni',
             'np',
             'nr',
@@ -1828,6 +1830,7 @@ class Referer(object):
             'pn',
             'py',
             'tj',
+            'tp',
             'tt',
             'vn',
             'ye',
@@ -2481,8 +2484,8 @@ if __name__ == '__main__':
              'https://git.io/vND4a'),
             add_help=False)
 
-        CURRENT_VALUE_FORMAT = Fore.YELLOW + Style.BRIGHT + "Current value: " \
-            + Fore.BLUE
+        CURRENT_VALUE_FORMAT = Fore.YELLOW + \
+            Style.BRIGHT + "Installed value: " + Fore.BLUE
 
         PARSER.add_argument(
             '-a',
@@ -2628,6 +2631,15 @@ if __name__ == '__main__':
                  Settings.quiet) +
              Style.RESET_ALL))
         PARSER.add_argument(
+            '--share-logs',
+            action='store_true',
+            help='Activate the sharing of logs to an API which helps manage logs in \
+                order to make PyFunceble a better script. %s' %
+            (CURRENT_VALUE_FORMAT +
+             repr(
+                 Settings.share_logs) +
+             Style.RESET_ALL))
+        PARSER.add_argument(
             '-s',
             '--simple',
             action='store_true',
@@ -2663,10 +2675,19 @@ if __name__ == '__main__':
                  Settings.travis) +
              Style.RESET_ALL))
         PARSER.add_argument(
+            '--travis-branch',
+            type=str,
+            default='master',
+            help='Switch the branch name where we are going to push. %s' %
+            (CURRENT_VALUE_FORMAT +
+             repr(
+                 Settings.travis_branch) +
+             Style.RESET_ALL))
+        PARSER.add_argument(
             '-v',
             '--version',
             action='version',
-            version='%(prog)s 0.22.6-beta'
+            version='%(prog)s 0.24.0-beta'
         )
 
         ARGS = PARSER.parse_args()
@@ -2723,6 +2744,9 @@ if __name__ == '__main__':
         if ARGS.quiet:
             Settings.quiet = Settings().switch('quiet')
 
+        if ARGS.share_logs:
+            Settings.share_logs = Settings().switch('share_logs')
+
         if ARGS.simple:
             Settings.simple = Settings().switch('simple')
             Settings.quiet = Settings().switch('quiet')
@@ -2736,5 +2760,8 @@ if __name__ == '__main__':
 
         if ARGS.travis:
             Settings.travis = Settings().switch('travis')
+
+        if ARGS.travis_branch:
+            Settings.travis_branch = ARGS.travis_branch
 
         PyFunceble(ARGS.domain, ARGS.file)
