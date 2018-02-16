@@ -132,11 +132,17 @@ class Settings(object):  # pylint: disable=too-few-public-methods
     # Note: DO NOT TOUCH UNLESS YOU KNOW WHAT IT MEANS!
     permanent_license_link = 'https://raw.githubusercontent.com/dead-hosts/repository-structure/master/LICENSE'  # pylint: disable=line-too-long
 
-    # This variable is used to set the arguments when executing PyFunceble.py
+    # This variable is used to set the arguments when executing PyFunceble.py.
     #
     # Note: DO NOT TOUCH UNLESS YOU KNOW WHAT IT MEANS!
     # Note: This variable is auto updated by Initiate()
     arguments = []
+
+    # This variable is used to set the tool arguments that have to be used.
+    #
+    # Note: DO NOT TOUCH UNLESS YOU KNOW WHAT IT MEANS!
+    # Note: This variable is auto updated by Initiate()
+    tool_arguments = []
 
 
 class Initiate(object):
@@ -199,9 +205,8 @@ class Initiate(object):
                 setattr(
                     Settings, index, Settings.informations[index])
         except AttributeError:
-            raise Exception(
-                '"%s" into %s in unknown.' %
-                (index, Settings.repository_info))
+            raise Exception('"%s" into %s in unknown.' %
+                            (index, Settings.repository_info))
 
     def download_PyFunceble(self):  # pylint: disable=invalid-name
         """
@@ -337,16 +342,16 @@ class Initiate(object):
             return True
 
     @classmethod
-    def _construct_arguments(cls):
+    def _construct_arguments(cls, to_contruct=None):
         """
         Construct the arguments to pass to PyFunceble.
         """
 
         result = ""
 
-        if Settings.arguments != []:
-            for argument in Settings.arguments:
-                if argument != Settings.arguments[-1]:
+        if to_contruct is not None and to_contruct != []:
+            for argument in to_contruct:
+                if argument != to_contruct[-1]:
                     result += argument + ' '
                 else:
                     result += argument
@@ -368,16 +373,16 @@ class Initiate(object):
         else:
             status = '--dev'
 
-        command_to_execute = 'sudo python3 %s --dev -u && ' % (tool_path)
+        command_to_execute = 'sudo python3 %s %s -u && ' % (tool_path, status)
         command_to_execute += 'python3 %s -v && ' % (tool_path)
         command_to_execute += 'export TRAVIS_BUILD_DIR=%s && ' % environ['TRAVIS_BUILD_DIR']
         command_to_execute += 'python3 %s -q --directory-structure && ' % (
             tool_path)
-        command_to_execute += 'sudo python3 %s %s --autosave-minutes %s --commit-autosave-message "[Autosave] %s" --commit-results-message "[Results] %s" -i && ' % (  # pylint: disable=line-too-long
-            tool_path, status, Settings.autosave_minutes, Settings.commit_autosave_message, Settings.commit_autosave_message)  # pylint: disable=line-too-long
+        command_to_execute += 'sudo python3 %s %s --autosave-minutes %s --commit-autosave-message "[Autosave] %s" --commit-results-message "[Results] %s" %s -i && ' % (  # pylint: disable=line-too-long
+            tool_path, status, Settings.autosave_minutes, Settings.commit_autosave_message, Settings.commit_autosave_message, self._construct_arguments(Settings.tool_arguments))  # pylint: disable=line-too-long
         command_to_execute += 'python3 %s -v && ' % (PyFunceble_path)
         command_to_execute += 'sudo python3 %s %s -f %s' % (
-            PyFunceble_path, self._construct_arguments(), Settings.file_to_test)
+            PyFunceble_path, self._construct_arguments(Settings.arguments), Settings.file_to_test)
 
         if self.allow_test():
 
