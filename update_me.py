@@ -526,6 +526,8 @@ class Initiate(object):
                     escape=True).match():
                 Settings.informations['currently_under_test'] = str(int(False))
                 commit_message = "[Results] " + commit_message + ' [ci skip]'
+
+                self._clean_original()
             else:
                 Settings.informations['currently_under_test'] = str(int(True))
                 commit_message = "[Autosave] " + commit_message
