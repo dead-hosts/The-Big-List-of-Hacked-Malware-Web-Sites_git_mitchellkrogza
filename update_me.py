@@ -18,11 +18,12 @@ Contributors:
 """
 
 from json import decoder, dump, loads
+from os import chmod, environ, getcwd, path, remove
 from os import sep as directory_separator
-from os import chmod, environ, getcwd, path, stat
+from os import stat
 from re import compile as comp
-from re import sub as substrings
 from re import escape
+from re import sub as substrings
 from shutil import copyfileobj
 from stat import S_IEXEC
 from subprocess import PIPE, Popen
@@ -107,18 +108,13 @@ class Settings(object):  # pylint: disable=too-few-public-methods
     # Note: DO NOT TOUCH UNLESS YOU KNOW WHAT IT MEANS!
     PyFunceble = {
         'PyFunceble.py': 'https://raw.githubusercontent.com/funilrys/PyFunceble/master/PyFunceble.py',  # pylint: disable=line-too-long
-        'tool.py': 'https://raw.githubusercontent.com/funilrys/PyFunceble/master/tool.py'}
+        'requirements.txt': 'https://raw.githubusercontent.com/funilrys/PyFunceble/master/requirements.txt'  # pylint: disable=line-too-long
+    }
 
     # This variable is used to match [ci skip] from the git log.
     #
     # Note: DO NOT TOUCH UNLESS YOU KNOW WHAT IT MEANS!
     regex_travis = '[ci skip]'
-
-    # This variable is used to set the number of minutes before we stop the script under Travis CI.
-    #
-    # Note: DO NOT TOUCH UNLESS YOU KNOW WHAT IT MEANS!
-    # Note: This variable is auto updated by Initiate()
-    autosave_minutes = 10
 
     # This variable is used to set the default commit message when we commit
     # under Travic CI.
@@ -132,17 +128,30 @@ class Settings(object):  # pylint: disable=too-few-public-methods
     # Note: DO NOT TOUCH UNLESS YOU KNOW WHAT IT MEANS!
     permanent_license_link = 'https://raw.githubusercontent.com/dead-hosts/repository-structure/master/LICENSE'  # pylint: disable=line-too-long
 
-    # This variable is used to set the arguments when executing PyFunceble.py.
+    # This variable is used to set the permanant config links
+    #
+    # Note: DO NOT TOUCH UNLESS YOU KNOW WHAT IT MEANS!
+    permanent_config_link = 'https://raw.githubusercontent.com/dead-hosts/repository-structure/master/cross_repositories_config.yaml'  # pylint: disable=line-too-long
+
+    # This variable is used to set the arguments when executing PyFunceble.py
     #
     # Note: DO NOT TOUCH UNLESS YOU KNOW WHAT IT MEANS!
     # Note: This variable is auto updated by Initiate()
     arguments = []
 
-    # This variable is used to set the tool arguments that have to be used.
+    # This variable is used to know if we need to delete INACTIVE and INVALID
+    # domain from the original file.
     #
     # Note: DO NOT TOUCH UNLESS YOU KNOW WHAT IT MEANS!
     # Note: This variable is auto updated by Initiate()
-    tool_arguments = []
+    clean_original = False
+
+    # This variable is used to set the location of the file for the list without
+    # dead/inactive domains
+    #
+    # Note: DO NOT TOUCH UNLESS YOU KNOW WHAT IT MEANS!
+    # Note: This variable is auto updated by Initiate()
+    clean_list_file = "clean.list"
 
 
 class Initiate(object):
@@ -151,6 +160,7 @@ class Initiate(object):
     """
 
     def __init__(self):  # pylint: disable=too-many-branches
+        self.config_update = 'wget %s -O config.yaml' % Settings.permanent_config_link
         self.travis()
         self.travis_permissions()
         self.stucture()
@@ -181,87 +191,6 @@ class Initiate(object):
         return
 
     @classmethod
-    def set_info_settings(cls, index):
-        """
-        Set Settings.informations according to info.json.
-
-        Arguments:
-            index: A string, a valid index name.
-        """
-
-        try:
-            getattr(Settings, index)
-            if index in [
-                    'stable',
-                    'currently_under_test'] and Settings.informations[index].isdigit():
-                setattr(Settings, index, bool(
-                    int(Settings.informations[index])))
-            elif index in ['days_until_next_test', 'last_test', 'autosave_minutes'] \
-                    and Settings.informations[index].isdigit():
-                setattr(
-                    Settings, index, int(
-                        Settings.informations[index]))
-            else:
-                setattr(
-                    Settings, index, Settings.informations[index])
-        except AttributeError:
-            raise Exception('"%s" into %s in unknown.' %
-                            (index, Settings.repository_info))
-
-    def download_PyFunceble(self):  # pylint: disable=invalid-name
-        """
-        Download PyFunceble files if they are not present.
-        """
-
-        for file in Settings.PyFunceble:
-            file_path = Settings.current_directory + file
-
-            if not path.isfile(file_path) or not Settings.stable:
-                download_link = Settings.PyFunceble[file].replace(
-                    'master', 'dev')
-            else:
-                download_link = Settings.PyFunceble[file]. replace(
-                    'dev', 'master')
-
-            if not Helpers.Download(download_link, file_path).link():
-                raise Exception('Unable to download %s.' % download_link)
-
-            self.travis_permissions()
-
-            stats = stat(file_path)
-            chmod(file_path, stats.st_mode | S_IEXEC)
-
-    def stucture(self):
-        """
-        Read info.json and retranscript its data into the script.
-        """
-
-        if path.isfile(Settings.repository_info):
-            content = Helpers.File(Settings.repository_info).read()
-            Settings.informations = Helpers.Dict().from_json(content)
-
-            for index in Settings.informations:
-                if Settings.informations[index] != '':
-                    if index == 'name':
-                        continue
-
-                    self.set_info_settings(index)
-                else:
-                    raise Exception(
-                        'Please complete "%s" into %s' %
-                        (index, Settings.repository_info))
-
-            self.download_PyFunceble()
-
-            Settings.file_to_test += Settings.list_name
-
-            self.list_file()
-        else:
-            raise Exception(
-                'Impossible to read %s' %
-                Settings.current_directory + 'info.json')
-
-    @classmethod
     def travis_permissions(cls):
         """
         Set permissions in order to avoid issues before commiting.
@@ -288,6 +217,127 @@ class Initiate(object):
 
         return
 
+    @classmethod
+    def set_info_settings(cls, index):
+        """
+        Set Settings.informations according to info.json.
+
+        Arguments:
+            index: A string, a valid index name.
+        """
+
+        try:
+            getattr(Settings, index)
+            if index in [
+                    'stable',
+                    'currently_under_test',
+                    'clean_original'] and Settings.informations[index].isdigit():
+                setattr(Settings, index, bool(
+                    int(Settings.informations[index])))
+            elif index in ['days_until_next_test', 'last_test'] \
+                    and Settings.informations[index].isdigit():
+                setattr(
+                    Settings, index, int(
+                        Settings.informations[index]))
+            else:
+                setattr(
+                    Settings, index, Settings.informations[index])
+        except AttributeError:
+            raise Exception(
+                '"%s" into %s in unknown.' %
+                (index, Settings.repository_info))
+
+    def download_PyFunceble(self):  # pylint: disable=invalid-name
+        """
+        Download PyFunceble files if they are not present.
+        """
+
+        for file in Settings.PyFunceble:
+            file_path = Settings.current_directory + file
+
+            if not path.isfile(file_path) or not Settings.stable:
+                download_link = Settings.PyFunceble[file].replace(
+                    'master', 'dev')
+            else:
+                download_link = Settings.PyFunceble[file]. replace(
+                    'dev', 'master')
+
+            if not Helpers.Download(download_link, file_path).link():
+                raise Exception('Unable to download %s.' % download_link)
+
+            self.travis_permissions()
+
+            stats = stat(file_path)
+            chmod(file_path, stats.st_mode | S_IEXEC)
+
+            if path.isfile(Settings.current_directory + 'tool.py'):
+                Helpers.File(Settings.current_directory + 'tool.py').delete()
+
+    @classmethod
+    def _format_domain(cls, extracted_domain):
+        """
+        Format the extracted domain before passing it to the system.
+
+        Argument:
+            - extracted_domain: str
+                The extracted domain or line from the file.
+        """
+
+        if not extracted_domain.startswith('#'):
+
+            if '#' in extracted_domain:
+                extracted_domain = extracted_domain[:extracted_domain.find(
+                    '#')].strip()
+
+            tabs = '\t'
+            space = ' '
+
+            tabs_position, space_position = (
+                extracted_domain.find(tabs), extracted_domain.find(space))
+
+            if tabs_position > -1 and space_position > -1:
+                if space_position < tabs_position:
+                    separator = space
+                else:
+                    separator = tabs
+            elif tabs_position > -1:
+                separator = tabs
+            elif space_position > -1:
+                separator = space
+            else:
+                separator = ''
+
+            if separator:
+                splited_line = extracted_domain.split(separator)
+
+                index = 1
+                while index < len(splited_line):
+                    if splited_line[index]:
+                        break
+                    index += 1
+
+                return splited_line[index]
+            return extracted_domain
+        return ""
+
+    def _extract_lines(self, file):
+        """
+        This method extract and format each line to get the domain.
+
+        Argument:
+            - file: str
+                The file to read.
+        """
+
+        result = []
+
+        for line in Helpers.File(file).to_list():
+            if line and not line.startswith('#'):
+                result.append(
+                    self._format_domain(line.strip()))
+
+        return result
+
     def list_file(self):
         """
         Download Settings.raw_link.
@@ -311,25 +361,76 @@ class Initiate(object):
                     Settings.file_to_test,
                     False).execute()
 
-                self.travis_permissions()
+                formated_content = self._extract_lines(Settings.file_to_test)
+
+                Helpers.File(
+                    Settings.file_to_test).write(
+                        '\n'.join(formated_content),
+                        overwrite=True)
+            elif not Settings.raw_link:
+                print("\n")
             else:
                 raise Exception(
                     'Unable to download the the file. Please check the link.')
 
             if path.isdir(Settings.current_directory + 'output'):
+                Helpers.Command(self.config_update, False).execute()
                 Helpers.Command(
                     Settings.current_directory +
-                    'tool.py -c',
+                    'PyFunceble.py --clean',
                     False).execute()
+
+            self.travis_permissions()
 
             return True
         return False
+
+    def stucture(self):
+        """
+        Read info.json and retranscript its data into the script.
+        """
+
+        if path.isfile(Settings.repository_info):
+            content = Helpers.File(Settings.repository_info).read()
+            Settings.informations = Helpers.Dict().from_json(content)
+
+            to_ignore = ['raw_link', 'name']
+
+            for index in Settings.informations:
+                if Settings.informations[index] != '':
+                    if index not in to_ignore[1:]:
+                        self.set_info_settings(index)
+                elif index in to_ignore:
+                    continue
+                else:
+                    raise Exception(
+                        'Please complete "%s" into %s' %
+                        (index, Settings.repository_info))
+
+            self.download_PyFunceble()
+
+            Settings.file_to_test += Settings.list_name
+
+            self.list_file()
+        else:
+            raise Exception(
+                'Impossible to read %s' %
+                Settings.current_directory + 'info.json')
 
     @classmethod
     def allow_test(cls):
         """
         Check if we allow a test.
         """
+
+        if not Settings.currently_under_test and Helpers.Regex(
+                Helpers.Command(
+                    'git log -1',
+                    False).execute(),
+                r'Launch\stest',
+                return_data=False,
+                escape=False).match():
+            return True
 
         if Settings.days_until_next_test >= 1 and Settings.last_test != 0:
             retest_date = Settings.last_test + \
@@ -342,62 +443,77 @@ class Initiate(object):
             return True
 
     @classmethod
-    def _construct_arguments(cls, to_contruct=None):
+    def _construct_arguments(cls):
         """
         Construct the arguments to pass to PyFunceble.
         """
 
-        result = ""
+        if Settings.arguments or Settings.commit_autosave_message:
+            if Settings.commit_autosave_message:
+                Settings.arguments.extend(
+                    [
+                        '--commit-autosave-message "[Autosave] %s"' %
+                        Settings.commit_autosave_message,
+                        '--commit-results-message "[Results] %s"' %
+                        Settings.commit_autosave_message])
 
-        if to_contruct is not None and to_contruct != []:
-            for argument in to_contruct:
-                if argument != to_contruct[-1]:
-                    result += argument + ' '
-                else:
-                    result += argument
+            return ' '.join(Settings.arguments)
+        return ""
 
-        return result
+    @classmethod
+    def _clean_original(cls):
+        """
+        Create a clean file file based on our results..
+        """
+
+        if Settings.clean_original:
+            active = Settings.current_directory + 'output/domains/ACTIVE/list'
+
+            clean_list = []
+
+            if path.isfile(active):
+                for line in Helpers.File(active).to_list():
+                    if line and not line.startswith('#'):
+                        clean_list.append(line.strip())
+
+                Helpers.File(Settings.clean_list_file).write(
+                    '\n'.join(clean_list),
+                    overwrite=True)
 
     def PyFunceble(self):  # pylint: disable=invalid-name
         """
         Install and run PyFunceble.
         """
 
-        tool_path = Settings.current_directory + 'tool.py'
         # pylint: disable=invalid-name
-        PyFunceble_path = Settings.current_directory + \
-            'PyFunceble.py'
+        PyFunceble_path = Settings.current_directory + 'PyFunceble.py'
 
         if Settings.stable:
             status = ''
         else:
             status = '--dev'
 
-        command_to_execute = 'sudo python3 %s %s -u && ' % (tool_path, status)
-        command_to_execute += 'python3 %s -v && ' % (tool_path)
-        command_to_execute += 'export TRAVIS_BUILD_DIR=%s && ' % environ['TRAVIS_BUILD_DIR']
-        command_to_execute += 'python3 %s -q --directory-structure && ' % (
-            tool_path)
-        command_to_execute += 'sudo python3 %s %s --autosave-minutes %s --commit-autosave-message "[Autosave] %s" --commit-results-message "[Results] %s" %s -i && ' % (  # pylint: disable=line-too-long
-            tool_path, status, Settings.autosave_minutes, Settings.commit_autosave_message, Settings.commit_autosave_message, self._construct_arguments(Settings.tool_arguments))  # pylint: disable=line-too-long
+        command_to_execute = 'sudo python3 %s %s -u && ' % (
+            PyFunceble_path, status)
         command_to_execute += 'python3 %s -v && ' % (PyFunceble_path)
+        command_to_execute += 'export TRAVIS_BUILD_DIR=%s && ' % environ['TRAVIS_BUILD_DIR']
         command_to_execute += 'sudo python3 %s %s -f %s' % (
-            PyFunceble_path, self._construct_arguments(Settings.arguments), Settings.file_to_test)
+            PyFunceble_path, self._construct_arguments(), Settings.file_to_test)
 
         if self.allow_test():
-
             Helpers.Download(
                 Settings.permanent_license_link,
                 Settings.current_directory +
                 'LICENSE').link()
 
             Settings.informations['last_test'] = strftime('%s')
+
             Helpers.Dict(
                 Settings.informations).to_json(
                     Settings.repository_info)
-            self.travis_permissions()
 
-            print(Helpers.Command(command_to_execute, True).execute())
+            Helpers.Command(self.config_update, False).execute()
+            Helpers.Command(command_to_execute, True).execute()
 
             commit_message = 'Update of info.json'
 
@@ -412,8 +528,7 @@ class Initiate(object):
                 commit_message = "[Results] " + commit_message + ' [ci skip]'
             else:
                 Settings.informations['currently_under_test'] = str(int(True))
-                commit_message = "[Autosave] " + \
-                    commit_message + ' && launch next test part'
+                commit_message = "[Autosave] " + commit_message
 
             Helpers.Dict(
                 Settings.informations).to_json(
@@ -500,6 +615,46 @@ class Helpers(object):  # pylint: disable=too-few-public-methods
                 funilrys = file.read()
 
             return funilrys
+
+        def to_list(self):
+            """
+            Read a file path and return each line as a list element.
+            """
+
+            result = []
+
+            for read in open(self.file):
+                result.append(read.rstrip('\n').strip())
+
+            return result
+
+        def write(self, data_to_write, overwrite=False):
+            """
+            Write or append data into the given file path.
+
+            Argument:
+                - data_to_write: str
+                    The data to write.
+            """
+
+            if data_to_write is not None and isinstance(
+                    data_to_write, str):
+                if overwrite or not path.isfile(self.file):
+                    with open(self.file, 'w', encoding="utf-8") as file:
+                        file.write(data_to_write)
+                else:
+                    with open(self.file, 'a', encoding="utf-8") as file:
+                        file.write(data_to_write)
+
+        def delete(self):
+            """
+            Delete a given file path.
+            """
+
+            try:
+                remove(self.file)
+            except OSError:
+                pass
 
     class Download(object):  # pylint: disable=too-few-public-methods
         """
