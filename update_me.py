@@ -153,6 +153,13 @@ class Settings(object):  # pylint: disable=too-few-public-methods
     # Note: This variable is auto updated by Initiate()
     clean_list_file = "clean.list"
 
+    # This variable is used to know if we read a custom `config.yaml` or
+    # download the latest from the repository structure.
+    #
+    # Note: DO NOT TOUCH UNLESS YOU KNOW WHAT IT MEANS!
+    # Note: This variable is auto updated by Initiate()
+    custom_pyfunceble_config = False
+
 
 class Initiate(object):
     """
@@ -231,7 +238,8 @@ class Initiate(object):
             if index in [
                     'stable',
                     'currently_under_test',
-                    'clean_original'] and Settings.informations[index].isdigit():
+                    'clean_original',
+                    'custom_pyfunceble_config'] and Settings.informations[index].isdigit():
                 setattr(Settings, index, bool(
                     int(Settings.informations[index])))
             elif index in ['days_until_next_test', 'last_test'] \
@@ -374,7 +382,9 @@ class Initiate(object):
                     'Unable to download the the file. Please check the link.')
 
             if path.isdir(Settings.current_directory + 'output'):
-                Helpers.Command(self.config_update, False).execute()
+
+                if not Settings.custom_pyfunceble_config:
+                    Helpers.Command(self.config_update, False).execute()
                 Helpers.Command(
                     Settings.current_directory +
                     'PyFunceble.py --clean',
@@ -512,7 +522,8 @@ class Initiate(object):
                 Settings.informations).to_json(
                     Settings.repository_info)
 
-            Helpers.Command(self.config_update, False).execute()
+            if not Settings.custom_pyfunceble_config:
+                Helpers.Command(self.config_update, False).execute()
             Helpers.Command(command_to_execute, True).execute()
 
             commit_message = 'Update of info.json'
