@@ -107,7 +107,7 @@ class Settings(object):  # pylint: disable=too-few-public-methods
     #
     # Note: DO NOT TOUCH UNLESS YOU KNOW WHAT IT MEANS!
     PyFunceble = {
-        "requirements.txt": "https://raw.githubusercontent.com/funilrys/PyFunceble/master/requirements.txt"  # pylint: disable=line-too-long
+        ".PyFunceble_production.yaml": "https://raw.githubusercontent.com/funilrys/PyFunceble/master/.PyFunceble_production.yaml"  # pylint: disable=line-too-long
     }
 
     # This variable is used to match [ci skip] from the git log.
@@ -159,6 +159,13 @@ class Settings(object):  # pylint: disable=too-few-public-methods
     # Note: This variable is auto updated by Initiate()
     custom_pyfunceble_config = False
 
+    # This variable is used to get the list of GitHub username to ping at the
+    # end of a test.
+    #
+    # Note: DO NOT TOUCH UNLESS YOU KNOW WHAT IT MEANS!
+    # Note: This variable is auto updated by Initiate()
+    ping = []
+
 
 class Initiate(object):
     """
@@ -192,7 +199,7 @@ class Initiate(object):
                 'git config --global user.name "%s"' % (environ["GIT_NAME"]), False
             ).execute()
             Helpers.Command("git config --global push.default simple", False).execute()
-            Helpers.Command("git checkout master", False).execute()
+            Helpers.Command("git checkout %s" % environ["GIT_BRANCH"], False).execute()
 
             return
 
@@ -441,7 +448,7 @@ class Initiate(object):
         Construct the arguments to pass to PyFunceble.
         """
 
-        if Settings.arguments != []:
+        if Settings.arguments:
             return " ".join(Settings.arguments)
 
         return ""
@@ -470,6 +477,21 @@ class Initiate(object):
                 "\n".join(clean_list), overwrite=True
             )
 
+    @classmethod
+    def _ping_constructor(cls):
+        """
+        Create the list of user to ping.
+        """
+
+        result = []
+        for username in Settings.ping:
+            if username.startswith("@"):
+                result.append(username)
+            else:
+                result.append("@%s" % username)
+
+        return " ".join(result)
+
     def PyFunceble(self):  # pylint: disable=invalid-name
         """
         Install and run PyFunceble.
@@ -481,8 +503,12 @@ class Initiate(object):
         command_to_execute = "export TRAVIS_BUILD_DIR=%s && " % environ[
             "TRAVIS_BUILD_DIR"
         ]
-        command_to_execute += "%s %s -f %s" % (
-            PyFunceble_path, self._construct_arguments(), Settings.file_to_test
+        command_to_execute += "%s %s --commit-autosave-message '%s' --commit-results-message '%s' -f %s" % (  # pylint: disable=line-too-long
+            PyFunceble_path,
+            self._construct_arguments(),
+            "[Autosave] %s" % Settings.commit_autosave_message,
+            "[Results] %s" % Settings.commit_autosave_message,
+            Settings.file_to_test,
         )
 
         if self.allow_test():
@@ -498,34 +524,38 @@ class Initiate(object):
                 Helpers.Command(self.config_update, False).execute()
             Helpers.Command(command_to_execute, True).execute()
 
-            try:
-                _ = environ["TRAVIS_BUILD_DIR"]
-                commit_message = "Update of info.json"
+            if Settings.ping:
+                ping = "&& %s" % self._ping_constructor()
+            else:
+                ping = ""
 
-                if Helpers.Regex(
-                    Helpers.Command("git log -1", False).execute(),
-                    "[Results]",
-                    return_data=False,
-                    escape=True,
-                ).match():
-                    Settings.informations["currently_under_test"] = str(int(False))
-                    commit_message = "[Results] " + commit_message + " [ci skip]"
+            _ = environ["TRAVIS_BUILD_DIR"]
+            commit_message = "Update of info.json"
 
-                    self._clean_original()
-                else:
-                    Settings.informations["currently_under_test"] = str(int(True))
-                    commit_message = "[Autosave] " + commit_message
+            if Helpers.Regex(
+                Helpers.Command("git log -1", False).execute(),
+                "[Results]",
+                return_data=False,
+                escape=True,
+            ).match():
+                Settings.informations["currently_under_test"] = str(int(False))
+                commit_message = "[Results] %s %s && Generation of clean.list [ci skip]" % (
+                    commit_message, ping
+                )
 
-                Helpers.Dict(Settings.informations).to_json(Settings.repository_info)
-                self.travis_permissions()
+                self._clean_original()
+            else:
+                Settings.informations["currently_under_test"] = str(int(True))
+                commit_message = "[Autosave] " + commit_message
 
-                Helpers.Command(
-                    "git add --all && git commit -a -m '%s' && git push origin master"
-                    % commit_message,
-                    False,
-                ).execute()
-            except KeyError:
-                pass
+            Helpers.Dict(Settings.informations).to_json(Settings.repository_info)
+            self.travis_permissions()
+
+            Helpers.Command(
+                "git add --all && git commit -a -m '%s' && git push origin %s"
+                % (commit_message, environ["GIT_BRANCH"]),
+                False,
+            ).execute()
         else:
             print(
                 "No need to test until %s."
