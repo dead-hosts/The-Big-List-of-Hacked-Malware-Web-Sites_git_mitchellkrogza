@@ -18,7 +18,7 @@ As [funilrys/dead-hosts](https://github.com/funilrys/dead-hosts) grew up it beca
 
 # About PyFunceble
 
-PyFunceble like [Funceble](https://github.com/funilrys/funceble) is A tool to check domains or IP availability by returning 3 possible [status](https://github.com/funilrys/PyFunceble/wiki/Columns#status): ACTIVE, INACTIVE or INVALID.
+PyFunceble like [Funceble](https://github.com/funilrys/funceble) is A tool to check domains or IP availability by returning 3 possible [status](https://pyfunceble.readthedocs.io/en/dev/colomns.html#status): ACTIVE, INACTIVE or INVALID.
 
 It also has been described by one of its most active user as:
 
@@ -28,7 +28,7 @@ If you need further informations about PyFunceble or Funceble please report to o
 
 ## About the status returned by PyFunceble
 
-For an up to date version of this part please report to the [Status](https://github.com/funilrys/PyFunceble/wiki/Columns#status) section of our Wiki.
+For an up to date version of this part please report to the [Status](https://pyfunceble.readthedocs.io/en/dev/colomns.html#status) section of our Wiki.
 
 ### ACTIVE
 
