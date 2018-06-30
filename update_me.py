@@ -18,14 +18,11 @@ Contributors:
 # pylint: disable=bad-continuation
 
 from json import decoder, dump, loads
-from os import chmod, environ, getcwd, path, remove
+from os import environ, getcwd, path, remove
 from os import sep as directory_separator
-from os import stat
 from re import compile as comp
 from re import escape
 from re import sub as substrings
-from shutil import copyfileobj
-from stat import S_IEXEC
 from subprocess import PIPE, Popen
 from time import ctime, strftime
 
@@ -287,9 +284,6 @@ class Initiate(object):
 
             self.travis_permissions()
 
-            stats = stat(file_path)
-            chmod(file_path, stats.st_mode | S_IEXEC)
-
             Helpers.File(Settings.current_directory + "PyFunceble.py").delete()
             Helpers.File(Settings.current_directory + "tool.py").delete()
 
@@ -352,7 +346,6 @@ class Initiate(object):
             Helpers.Command("git log -1", False).execute(),
             regex_new_test,
             return_data=False,
-            escape=True,
         ).match():
 
             if Helpers.Download(Settings.raw_link, Settings.file_to_test).link():
@@ -426,7 +419,6 @@ class Initiate(object):
             Helpers.Command("git log -1", False).execute(),
             r"Launch\stest",
             return_data=False,
-            escape=False,
         ).match():
             return True
 
@@ -503,11 +495,12 @@ class Initiate(object):
         command_to_execute = "export TRAVIS_BUILD_DIR=%s && " % environ[
             "TRAVIS_BUILD_DIR"
         ]
-        command_to_execute += "%s %s --commit-autosave-message '%s' --commit-results-message '%s' -f %s" % (  # pylint: disable=line-too-long
+        command_to_execute += "%s %s --commit-autosave-message '%s' --commit-results-message '%s' --travis-branch %s -f %s" % (  # pylint: disable=line-too-long
             PyFunceble_path,
             self._construct_arguments(),
             "[Autosave] %s" % Settings.commit_autosave_message,
             "[Results] %s" % Settings.commit_autosave_message,
+            environ["GIT_BRANCH"],
             Settings.file_to_test,
         )
 
@@ -554,7 +547,7 @@ class Initiate(object):
             Helpers.Command(
                 "git add --all && git commit -a -m '%s' && git push origin %s"
                 % (commit_message, environ["GIT_BRANCH"]),
-                False,
+                True,
             ).execute()
         else:
             print(
@@ -719,14 +712,12 @@ class Helpers(object):  # pylint: disable=too-few-public-methods
             This method initiate the download.
             """
 
-            request = get(self.link_to_download, stream=True)
+            req = get(self.link_to_download)
 
-            if request.status_code == 200:
-                with open(self.destination, "wb") as file:
-                    request.raw.decode_content = True
-                    copyfileobj(request.raw, file)
+            if req.status_code == 200:
+                Helpers.File(self.destination).write(req.text, overwrite=True)
 
-                del request
+                del req
 
                 return True
 
@@ -754,7 +745,6 @@ class Helpers(object):  # pylint: disable=too-few-public-methods
                 to_decode: byte(s), Output of a command to decode.
             """
             if to_decode is not None:
-                # return to_decode.decode(self.decode_type)
                 return str(to_decode, self.decode_type)
 
             return False
@@ -775,8 +765,12 @@ class Helpers(object):  # pylint: disable=too-few-public-methods
                 if not decoded:
                     return "Unkown error. for %s" % (self.command)
 
-                print(decoded)
-                exit(1)
+                if self.stdout:
+                    print(decoded)
+                    exit(1)
+                else:
+                    return decoded
+
             return self.decode_output(output)
 
     class Regex(object):  # pylint: disable=too-few-public-methods
