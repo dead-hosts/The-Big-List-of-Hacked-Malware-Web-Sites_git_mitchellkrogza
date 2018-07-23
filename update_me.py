@@ -170,9 +170,11 @@ class Initiate(object):
     """
 
     def __init__(self):  # pylint: disable=too-many-branches
-        self.config_update = "wget %s -O .PyFunceble.yaml" % Settings.permanent_config_link
         self.travis()
         self.travis_permissions()
+
+        if not Settings.custom_pyfunceble_config:
+            Helpers.Download(Settings.permanent_config_link, ".PyFunceble.yaml").link()
         self.stucture()
 
     @classmethod
@@ -221,9 +223,10 @@ class Initiate(object):
             for command in commands:
                 Helpers.Command(command, False).execute()
 
-            if Helpers.Command(
-                "git config core.sharedRepository", False
-            ).execute() == "":
+            if (
+                Helpers.Command("git config core.sharedRepository", False).execute()
+                == ""
+            ):
                 Helpers.Command(
                     "git config core.sharedRepository group", False
                 ).execute()
@@ -244,20 +247,21 @@ class Initiate(object):
 
         try:
             getattr(Settings, index)
-            if index in [
-                "stable",
-                "currently_under_test",
-                "clean_original",
-                "custom_pyfunceble_config",
-            ] and Settings.informations[
+            if (
                 index
-            ].isdigit():
+                in [
+                    "stable",
+                    "currently_under_test",
+                    "clean_original",
+                    "custom_pyfunceble_config",
+                ]
+                and Settings.informations[index].isdigit()
+            ):
                 setattr(Settings, index, bool(int(Settings.informations[index])))
-            elif index in [
-                "days_until_next_test", "last_test"
-            ] and Settings.informations[
-                index
-            ].isdigit():
+            elif (
+                index in ["days_until_next_test", "last_test"]
+                and Settings.informations[index].isdigit()
+            ):
                 setattr(Settings, index, int(Settings.informations[index]))
             else:
                 setattr(Settings, index, Settings.informations[index])
@@ -300,7 +304,9 @@ class Initiate(object):
         if not extracted_domain.startswith("#"):
 
             if "#" in extracted_domain:
-                extracted_domain = extracted_domain[:extracted_domain.find("#")].strip()
+                extracted_domain = extracted_domain[
+                    : extracted_domain.find("#")
+                ].strip()
 
             if " " in extracted_domain or "\t" in extracted_domain:
                 splited_line = extracted_domain.split()
@@ -342,11 +348,14 @@ class Initiate(object):
 
         regex_new_test = r"Launch\stest"
 
-        if not Settings.currently_under_test or Helpers.Regex(
-            Helpers.Command("git log -1", False).execute(),
-            regex_new_test,
-            return_data=False,
-        ).match():
+        if (
+            not Settings.currently_under_test
+            or Helpers.Regex(
+                Helpers.Command("git log -1", False).execute(),
+                regex_new_test,
+                return_data=False,
+            ).match()
+        ):
 
             if Helpers.Download(Settings.raw_link, Settings.file_to_test).link():
                 Helpers.Command("dos2unix " + Settings.file_to_test, False).execute()
@@ -364,9 +373,6 @@ class Initiate(object):
                 )
 
             if path.isdir(Settings.current_directory + "output"):
-
-                if not Settings.custom_pyfunceble_config:
-                    Helpers.Command(self.config_update, False).execute()
                 Helpers.Command("PyFunceble --clean", False).execute()
 
             self.travis_permissions()
@@ -415,11 +421,14 @@ class Initiate(object):
         Check if we allow a test.
         """
 
-        if not Settings.currently_under_test and Helpers.Regex(
-            Helpers.Command("git log -1", False).execute(),
-            r"Launch\stest",
-            return_data=False,
-        ).match():
+        if (
+            not Settings.currently_under_test
+            and Helpers.Regex(
+                Helpers.Command("git log -1", False).execute(),
+                r"Launch\stest",
+                return_data=False,
+            ).match()
+        ):
             return True
 
         if Settings.days_until_next_test >= 1 and Settings.last_test != 0:
@@ -492,17 +501,28 @@ class Initiate(object):
         # pylint: disable=invalid-name
         PyFunceble_path = "PyFunceble"
 
-        command_to_execute = "export TRAVIS_BUILD_DIR=%s && " % environ[
-            "TRAVIS_BUILD_DIR"
-        ]
-        command_to_execute += "%s %s --commit-autosave-message '%s' --commit-results-message '%s' --travis-branch %s -f %s" % (  # pylint: disable=line-too-long
-            PyFunceble_path,
-            self._construct_arguments(),
-            "[Autosave] %s" % Settings.commit_autosave_message,
-            "[Results] %s" % Settings.commit_autosave_message,
-            environ["GIT_BRANCH"],
-            Settings.file_to_test,
-        )
+        try:
+            command_to_execute = (
+                "export TRAVIS_BUILD_DIR=%s && " % environ["TRAVIS_BUILD_DIR"]
+            )
+
+            command_to_execute += (
+                "%s %s --commit-autosave-message '%s' --commit-results-message '%s' --travis-branch %s -f %s"  # pylint: disable=line-too-long
+                % (
+                    PyFunceble_path,
+                    self._construct_arguments(),
+                    "[Autosave] %s" % Settings.commit_autosave_message,
+                    "[Results] %s" % Settings.commit_autosave_message,
+                    environ["GIT_BRANCH"],
+                    Settings.file_to_test,
+                )
+            )
+        except KeyError:
+            command_to_execute = "%s %s -f %s" % (  # pylint: disable=line-too-long
+                PyFunceble_path,
+                self._construct_arguments(),
+                Settings.file_to_test,
+            )
 
         if self.allow_test():
             Helpers.Download(
@@ -513,8 +533,6 @@ class Initiate(object):
 
             Helpers.Dict(Settings.informations).to_json(Settings.repository_info)
 
-            if not Settings.custom_pyfunceble_config:
-                Helpers.Command(self.config_update, False).execute()
             Helpers.Command(command_to_execute, True).execute()
 
             if Settings.ping:
@@ -522,33 +540,37 @@ class Initiate(object):
             else:
                 ping = ""
 
-            _ = environ["TRAVIS_BUILD_DIR"]
-            commit_message = "Update of info.json"
+            try:
+                _ = environ["TRAVIS_BUILD_DIR"]
+                commit_message = "Update of info.json"
 
-            if Helpers.Regex(
-                Helpers.Command("git log -1", False).execute(),
-                "[Results]",
-                return_data=False,
-                escape=True,
-            ).match():
-                Settings.informations["currently_under_test"] = str(int(False))
-                commit_message = "[Results] %s %s && Generation of clean.list [ci skip]" % (
-                    commit_message, ping
-                )
+                if Helpers.Regex(
+                    Helpers.Command("git log -1", False).execute(),
+                    "[Results]",
+                    return_data=False,
+                    escape=True,
+                ).match():
+                    Settings.informations["currently_under_test"] = str(int(False))
+                    commit_message = (
+                        "[Results] %s %s && Generation of clean.list [ci skip]"
+                        % (commit_message, ping)
+                    )
 
-                self._clean_original()
-            else:
-                Settings.informations["currently_under_test"] = str(int(True))
-                commit_message = "[Autosave] " + commit_message
+                    self._clean_original()
+                else:
+                    Settings.informations["currently_under_test"] = str(int(True))
+                    commit_message = "[Autosave] " + commit_message
 
-            Helpers.Dict(Settings.informations).to_json(Settings.repository_info)
-            self.travis_permissions()
+                Helpers.Dict(Settings.informations).to_json(Settings.repository_info)
+                self.travis_permissions()
 
-            Helpers.Command(
-                "git add --all && git commit -a -m '%s' && git push origin %s"
-                % (commit_message, environ["GIT_BRANCH"]),
-                True,
-            ).execute()
+                Helpers.Command(
+                    "git add --all && git commit -a -m '%s' && git push origin %s"
+                    % (commit_message, environ["GIT_BRANCH"]),
+                    True,
+                ).execute()
+            except KeyError:
+                pass
         else:
             print(
                 "No need to test until %s."
