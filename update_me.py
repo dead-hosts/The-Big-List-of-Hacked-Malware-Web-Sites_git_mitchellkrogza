@@ -202,6 +202,7 @@ class Initiate:
 
             to_replace = {
                 r"less:.*": "less: True",
+                r"plain_list_domain:.*": "plain_list_domain: True",
                 r"seconds_before_http_timeout:.*": "seconds_before_http_timeout: 6",
                 r"share_logs:.*": "share_logs: True",
                 r"split:.*": "split: True",
