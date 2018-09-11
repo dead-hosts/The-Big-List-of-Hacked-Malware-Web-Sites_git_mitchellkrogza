@@ -176,7 +176,9 @@ class Initiate:
 
         self._fix_cross_repo_config()
 
-        if not Settings.custom_pyfunceble_config:
+        if not Settings.custom_pyfunceble_config and not path.isfile(
+            Settings.permanent_config_link.split("/")[-1]
+        ):
             Helpers.Download(Settings.permanent_config_link, ".PyFunceble.yaml").link()
         self.stucture()
 
@@ -219,6 +221,7 @@ class Initiate:
                 ).replace()
 
             Helpers.File(destination).write(content, overwrite=True)
+            Helpers.File(".PyFunceble.yaml").write(content, overwrite=True)
 
     @classmethod
     def travis(cls):
@@ -416,7 +419,10 @@ class Initiate:
                 )
 
             if path.isdir(Settings.current_directory + "output"):
-                Helpers.Command("PyFunceble --clean", False).execute()
+                try:
+                    Helpers.Command("PyFunceble --clean", False).execute()
+                except KeyError:
+                    pass
 
             self.travis_permissions()
 
@@ -576,7 +582,10 @@ class Initiate:
 
             Helpers.Dict(Settings.informations).to_json(Settings.repository_info)
 
-            Helpers.Command(command_to_execute, True).execute()
+            try:
+                Helpers.Command(command_to_execute, True).execute()
+            except KeyError:
+                pass
 
             if Settings.ping:
                 ping = "&& %s" % self._ping_constructor()
