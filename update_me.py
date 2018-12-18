@@ -444,6 +444,11 @@ class Initiate:
                     Helpers.Command("PyFunceble --clean", False).execute()
                 except KeyError:
                     pass
+            else:
+                try:
+                    Helpers.Command("PyFunceble --directory-structure", False).execute()
+                except KeyError:
+                    pass
 
             self.travis_permissions()
 
@@ -560,6 +565,7 @@ class Initiate:
             command_to_execute = (
                 "export TRAVIS_BUILD_DIR=%s && " % environ["TRAVIS_BUILD_DIR"]
             )
+            command_to_execute += "%s --version && " % PyFunceble_path
 
             usernames = self.github_username_constructor()
 
