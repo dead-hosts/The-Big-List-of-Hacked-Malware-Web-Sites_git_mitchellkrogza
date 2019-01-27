@@ -272,7 +272,7 @@ class Initiate:
             ]
 
             for command in commands:
-                Helpers.Command(command, False).execute()
+                Helpers.Command(command, True).execute()
 
             if (
                 Helpers.Command("git config core.sharedRepository", False).execute()
@@ -600,6 +600,7 @@ class Initiate:
 
             Settings.informations["currently_under_test"] = str(int(True))
             Settings.informations["last_test"] = strftime("%s")
+            Settings.informations["days_until_next_test"] = str(0)
 
             Helpers.Dict(Settings.informations).to_json(Settings.repository_info)
             self.travis_permissions()
