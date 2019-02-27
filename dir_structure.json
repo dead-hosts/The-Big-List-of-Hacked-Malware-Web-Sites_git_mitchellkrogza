@@ -12,25 +12,25 @@
                 "sha512": "a790efcfa86e41b9d1c9cfacc2af49f44cfadb401a755bde4630edb8f577b1aee28b28578bcd46d4a28ac2abe3736e4ce8f75328ee29346ef7d37502458b1eff"
             }
         },
-        "AnalyticACTIVE/": {
+        "Analytic/ACTIVE/": {
             ".gitignore": {
                 "content": "*@@@!.gitignore",
                 "sha512": "68fbcbebe57013e70f798ec673d6c554cf0b118f41a56baf92d53686f8d24fda670ed6dda23c6cbab630dfaf8cbf6d6a52a6815ac3680b24dad99b1305de6279"
             }
         },
-        "AnalyticPOTENTIALLY_ACTIVE/": {
+        "Analytic/POTENTIALLY_ACTIVE/": {
             ".gitignore": {
                 "content": "*@@@!.gitignore",
                 "sha512": "68fbcbebe57013e70f798ec673d6c554cf0b118f41a56baf92d53686f8d24fda670ed6dda23c6cbab630dfaf8cbf6d6a52a6815ac3680b24dad99b1305de6279"
             }
         },
-        "AnalyticPOTENTIALLY_INACTIVE/": {
+        "Analytic/POTENTIALLY_INACTIVE/": {
             ".gitignore": {
                 "content": "*@@@!.gitignore",
                 "sha512": "68fbcbebe57013e70f798ec673d6c554cf0b118f41a56baf92d53686f8d24fda670ed6dda23c6cbab630dfaf8cbf6d6a52a6815ac3680b24dad99b1305de6279"
             }
         },
-        "AnalyticSUSPICIOUS/": {
+        "Analytic/SUSPICIOUS/": {
             ".gitignore": {
                 "content": "*@@@!.gitignore",
                 "sha512": "68fbcbebe57013e70f798ec673d6c554cf0b118f41a56baf92d53686f8d24fda670ed6dda23c6cbab630dfaf8cbf6d6a52a6815ac3680b24dad99b1305de6279"
@@ -42,25 +42,25 @@
                 "sha512": "7204dc4062a3e1df2c99dd671e10cb24bc07a897c496e56deeb8e40d1693ccd9a1da4aec302c8f6647dd1bab5750a1473c9eda1ff1898a4253eee67efb1be315"
             }
         },
-        "domainsACTIVE/": {
+        "domains/ACTIVE/": {
             ".gitignore": {
                 "content": "*@@@!.gitignore",
                 "sha512": "68fbcbebe57013e70f798ec673d6c554cf0b118f41a56baf92d53686f8d24fda670ed6dda23c6cbab630dfaf8cbf6d6a52a6815ac3680b24dad99b1305de6279"
             }
         },
-        "domainsINACTIVE/": {
+        "domains/INACTIVE/": {
             ".gitignore": {
                 "content": "*@@@!.gitignore",
                 "sha512": "68fbcbebe57013e70f798ec673d6c554cf0b118f41a56baf92d53686f8d24fda670ed6dda23c6cbab630dfaf8cbf6d6a52a6815ac3680b24dad99b1305de6279"
             }
         },
-        "domainsINVALID/": {
+        "domains/INVALID/": {
             ".gitignore": {
                 "content": "*@@@!.gitignore",
                 "sha512": "68fbcbebe57013e70f798ec673d6c554cf0b118f41a56baf92d53686f8d24fda670ed6dda23c6cbab630dfaf8cbf6d6a52a6815ac3680b24dad99b1305de6279"
             }
         },
-        "domainsVALID/": {
+        "domains/VALID/": {
             ".gitignore": {
                 "content": "*@@@!.gitignore",
                 "sha512": "68fbcbebe57013e70f798ec673d6c554cf0b118f41a56baf92d53686f8d24fda670ed6dda23c6cbab630dfaf8cbf6d6a52a6815ac3680b24dad99b1305de6279"
@@ -72,25 +72,25 @@
                 "sha512": "7204dc4062a3e1df2c99dd671e10cb24bc07a897c496e56deeb8e40d1693ccd9a1da4aec302c8f6647dd1bab5750a1473c9eda1ff1898a4253eee67efb1be315"
             }
         },
-        "hostsACTIVE/": {
+        "hosts/ACTIVE/": {
             ".gitignore": {
                 "content": "*@@@!.gitignore",
                 "sha512": "68fbcbebe57013e70f798ec673d6c554cf0b118f41a56baf92d53686f8d24fda670ed6dda23c6cbab630dfaf8cbf6d6a52a6815ac3680b24dad99b1305de6279"
             }
         },
-        "hostsINACTIVE/": {
+        "hosts/INACTIVE/": {
             ".gitignore": {
                 "content": "*@@@!.gitignore",
                 "sha512": "68fbcbebe57013e70f798ec673d6c554cf0b118f41a56baf92d53686f8d24fda670ed6dda23c6cbab630dfaf8cbf6d6a52a6815ac3680b24dad99b1305de6279"
             }
         },
-        "hostsINVALID/": {
+        "hosts/INVALID/": {
             ".gitignore": {
                 "content": "*@@@!.gitignore",
                 "sha512": "68fbcbebe57013e70f798ec673d6c554cf0b118f41a56baf92d53686f8d24fda670ed6dda23c6cbab630dfaf8cbf6d6a52a6815ac3680b24dad99b1305de6279"
             }
         },
-        "hostsVALID/": {
+        "hosts/VALID/": {
             ".gitignore": {
                 "content": "*@@@!.gitignore",
                 "sha512": "68fbcbebe57013e70f798ec673d6c554cf0b118f41a56baf92d53686f8d24fda670ed6dda23c6cbab630dfaf8cbf6d6a52a6815ac3680b24dad99b1305de6279"
@@ -102,25 +102,25 @@
                 "sha512": "7204dc4062a3e1df2c99dd671e10cb24bc07a897c496e56deeb8e40d1693ccd9a1da4aec302c8f6647dd1bab5750a1473c9eda1ff1898a4253eee67efb1be315"
             }
         },
-        "jsonACTIVE/": {
+        "json/ACTIVE/": {
             ".gitignore": {
                 "content": "*@@@!.gitignore",
                 "sha512": "68fbcbebe57013e70f798ec673d6c554cf0b118f41a56baf92d53686f8d24fda670ed6dda23c6cbab630dfaf8cbf6d6a52a6815ac3680b24dad99b1305de6279"
             }
         },
-        "jsonINACTIVE/": {
+        "json/INACTIVE/": {
             ".gitignore": {
                 "content": "*@@@!.gitignore",
                 "sha512": "68fbcbebe57013e70f798ec673d6c554cf0b118f41a56baf92d53686f8d24fda670ed6dda23c6cbab630dfaf8cbf6d6a52a6815ac3680b24dad99b1305de6279"
             }
         },
-        "jsonINVALID/": {
+        "json/INVALID/": {
             ".gitignore": {
                 "content": "*@@@!.gitignore",
                 "sha512": "68fbcbebe57013e70f798ec673d6c554cf0b118f41a56baf92d53686f8d24fda670ed6dda23c6cbab630dfaf8cbf6d6a52a6815ac3680b24dad99b1305de6279"
             }
         },
-        "jsonVALID/": {
+        "json/VALID/": {
             ".gitignore": {
                 "content": "*@@@!.gitignore",
                 "sha512": "68fbcbebe57013e70f798ec673d6c554cf0b118f41a56baf92d53686f8d24fda670ed6dda23c6cbab630dfaf8cbf6d6a52a6815ac3680b24dad99b1305de6279"
@@ -132,7 +132,7 @@
                 "sha512": "83f76a1d8feaa294f19dfd5ceb8301c676a7168961c5298ede5b093eefaf5134952ce326c1c32031f2f936f70af5fc0103c2d01b111de78d09f6ba2d97247e3f"
             }
         },
-        "logspercentage/": {
+        "logs/percentage/": {
             ".gitignore": {
                 "content": "*@@@!.gitignore",
                 "sha512": "68fbcbebe57013e70f798ec673d6c554cf0b118f41a56baf92d53686f8d24fda670ed6dda23c6cbab630dfaf8cbf6d6a52a6815ac3680b24dad99b1305de6279"
