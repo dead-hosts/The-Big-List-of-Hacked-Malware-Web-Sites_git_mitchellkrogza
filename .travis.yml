@@ -39,5 +39,8 @@ script:
   - python3 update_me.py
 
 notifications:
-  on_success: change
-  on_failure: always
+  email:
+    recipients:
+      - dead-hosts@funilrys.com
+    on_success: never
+    on_failure: always
