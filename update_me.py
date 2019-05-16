@@ -16,7 +16,7 @@ Contributors:
 
     @GitHubUsername, Name, Email (optional)
 """
-# pylint: disable=bad-continuation
+# pylint: disable=bad-continuation, too-many-lines
 
 from json import decoder, dump, loads
 from os import environ, getcwd, path, remove
@@ -28,7 +28,6 @@ from subprocess import PIPE, Popen
 from time import ctime, strftime
 
 from requests import get
-
 
 class Settings:  # pylint: disable=too-few-public-methods
     """
@@ -107,6 +106,24 @@ class Settings:  # pylint: disable=too-few-public-methods
     PyFunceble = {
         ".PyFunceble_production.yaml": "https://raw.githubusercontent.com/funilrys/PyFunceble/dev/.PyFunceble_production.yaml"  # pylint: disable=line-too-long
     }
+
+    PyFunceble_config = {
+        "less": True,
+        "plain_list_domain": True,
+        "seconds_before_http_timeout": 6,
+        "share_logs": True,
+        "split": True,
+        "travis_autosave_minutes": 10,
+        "travis": True,
+        "multiprocess": True,
+        "maximal_processes": 50,
+        "dns_server": ["1.1.1.1", "1.0.0.1"],
+    }
+
+    try:
+        PyFunceble_config["travis_branch"] = environ["GIT_BRANCH"]
+    except KeyError:
+        PyFunceble_config["travis_branch"] = "master"
 
     # This variable is used to match [ci skip] from the git log.
     #
@@ -207,26 +224,13 @@ class Initiate:
         if path.isfile(destination):
             Helpers.Download(to_download, destination).link()
 
-            to_replace = {
-                r"less:.*": "less: True",
-                r"plain_list_domain:.*": "plain_list_domain: True",
-                r"seconds_before_http_timeout:.*": "seconds_before_http_timeout: 6",
-                r"share_logs:.*": "share_logs: True",
-                r"split:.*": "split: True",
-                r"travis_autosave_minutes:.*": "travis_autosave_minutes: 10",
-                r"travis_branch:.*": "travis_branch: master",
-                r"travis:.*": "travis: True",
-            }
+            destination_file = Helpers.File(destination)
+            content = Helpers.Dict().from_yaml(destination_file.read())
 
-            content = Helpers.File(destination).read()
+            content.update(Settings.PyFunceble_config)
 
-            for regex, replacement in to_replace.items():
-                content = Helpers.Regex(
-                    content, regex, replace_with=replacement, return_data=True
-                ).replace()
-
-            Helpers.File(destination).write(content, overwrite=True)
-            Helpers.File(".PyFunceble.yaml").write(content, overwrite=True)
+            Helpers.Dict(content).to_yaml(destination)
+            Helpers.Dict(content).to_yaml(".PyFunceble.yaml")
 
     @classmethod
     def travis(cls):
@@ -272,7 +276,7 @@ class Initiate:
             ]
 
             for command in commands:
-                Helpers.Command(command, True).execute()
+                Helpers.Command(command, False).execute()
 
             if (
                 Helpers.Command("git config core.sharedRepository", False).execute()
@@ -679,6 +683,25 @@ class Helpers:  # pylint: disable=too-few-public-methods
                     sort_keys=True,
                 )
 
+        def to_yaml(self, destination, flow_style=False):
+            """
+            Save a dictionnary into a YAML file.
+
+            Arguments:
+                - destination: A string, A path to a file which we are going to write.
+                - flow_style: A bool, Tell us to follow or not the default flow style.
+            """
+
+            with open(destination, "w") as file:
+                yaml_dump(
+                    self.main_dictionnary,
+                    file,
+                    encoding="utf-8",
+                    allow_unicode=True,
+                    indent=4,
+                    default_flow_style=flow_style,
+                )
+
         @classmethod
         def from_json(cls, data):
             """
@@ -693,6 +716,17 @@ class Helpers:  # pylint: disable=too-few-public-methods
 
             except decoder.JSONDecodeError:
                 return {}
+
+        @classmethod
+        def from_yaml(cls, yaml):
+            """
+            Conver a YAML formatted string into a dictionnary.
+
+            Argument:
+                yaml: A string, A YAML formatted string.
+            """
+
+            return yaml_load(yaml)
 
     class File:  # pylint: disable=too-few-public-methods
         """
@@ -930,7 +964,6 @@ class Helpers:  # pylint: disable=too-few-public-methods
 
                     if self.group != 0:  # pylint: disable=no-member
                         return result[self.group]  # pylint: disable=no-member
-
                 else:
                     result = pre_result.group(
                         self.group  # pylint: disable=no-member
@@ -938,7 +971,7 @@ class Helpers:  # pylint: disable=too-few-public-methods
 
                 return result
 
-            elif not self.return_data and pre_result:  # pylint: disable=no-member
+            if not self.return_data and pre_result:  # pylint: disable=no-member
                 return True
 
             return False
@@ -960,4 +993,13 @@ class Helpers:  # pylint: disable=too-few-public-methods
 
 
 if __name__ == "__main__":
+    try:
+        from yaml import dump as yaml_dump
+        from yaml import safe_load as yaml_load
+    except ModuleNotFoundError:
+        Helpers.Command("pip3 install pyyaml").execute()
+
+        from yaml import dump as yaml_dump
+        from yaml import safe_load as yaml_load
+
     Initiate().PyFunceble()
