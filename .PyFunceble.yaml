@@ -1,7 +1,7 @@
 adblock: false
 auto_continue: true
-command: ''
-command_before_end: ''
+command: hash dead_hosts_launcher && dead_hosts_launcher --save
+command_before_end: hash dead_hosts_launcher && dead_hosts_launcher --end
 custom_ip: 0.0.0.0
 days_between_db_retest: 1
 db_type: json
@@ -63,9 +63,9 @@ http_codes:
         - 205
         - 206
 iana_whois_server: whois.iana.org
-idna_conversion: false
+idna_conversion: true
 inactive_database: true
-less: true
+less: false
 links:
     api_date_format: https://pyfunceble.funilrys.com/api/date-format
     api_no_referer: https://pyfunceble.funilrys.com/api/no-referer
@@ -80,7 +80,7 @@ links:
     sqlite: https://raw.githubusercontent.com/funilrys/PyFunceble/dev/db_types/sqlite.sql
 local: false
 logs: true
-maximal_processes: 10
+maximal_processes: 20
 mining: false
 multiprocess: false
 no_files: false
@@ -143,7 +143,7 @@ outputs:
 plain_list_domain: true
 quiet: false
 seconds_before_http_timeout: 6
-share_logs: true
+share_logs: false
 show_execution_time: false
 show_percentage: true
 simple: false
@@ -185,8 +185,8 @@ status:
         valid: VALID
 syntax: false
 travis: true
-travis_autosave_commit: PyFunceble - AutoSave
-travis_autosave_final_commit: PyFunceble - Results
+travis_autosave_commit: '[Autosave][Dead-Hosts::repository-structure]'
+travis_autosave_final_commit: '[Final/Result][Dead-Hosts::repository-structure]'
 travis_autosave_minutes: 10
 travis_branch: master
 unified: false
