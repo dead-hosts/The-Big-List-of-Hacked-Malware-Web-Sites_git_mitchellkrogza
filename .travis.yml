@@ -29,14 +29,11 @@ addons:
 
 install:
   - pip3 install --upgrade pip
-  - pip3 install requests
-
-before_script:
-  - if [[ ! -f .administrators ]]; then wget "${UPDATE_ME_LOCATION}" -o /dev/null -O update_me.py && chmod +x update_me.py; else echo "update_me not downloaded :)"; fi
-  - if [[ ! -f .administrators ]]; then wget "${ADMIN_LOCATION}" -o /dev/null -O admin.py && chmod +x admin.py; else echo "admin not downloaded :)"; fi
+  - pip3 install dead-hosts-launcher
 
 script:
-  - python3 update_me.py
+  - dead_hosts_launcher
+
 
 notifications:
   email:
