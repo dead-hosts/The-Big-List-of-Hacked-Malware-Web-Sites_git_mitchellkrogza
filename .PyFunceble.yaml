@@ -1,4 +1,5 @@
 adblock: false
+aggressive: false
 auto_continue: true
 command: hash dead_hosts_launcher && dead_hosts_launcher --save
 command_before_end: hash dead_hosts_launcher && dead_hosts_launcher --end
@@ -62,6 +63,7 @@ http_codes:
         - 204
         - 205
         - 206
+    not_found_default: XXX
 iana_whois_server: whois.iana.org
 idna_conversion: true
 inactive_database: true
@@ -69,15 +71,14 @@ less: false
 links:
     api_date_format: https://pyfunceble.funilrys.com/api/date-format
     api_no_referer: https://pyfunceble.funilrys.com/api/no-referer
-    config: https://raw.githubusercontent.com/funilrys/PyFunceble/master/.PyFunceble_production.yaml
-    dir_structure: https://raw.githubusercontent.com/funilrys/PyFunceble/master/dir_structure_production.json
-    iana: https://raw.githubusercontent.com/funilrys/PyFunceble/master/iana-domains-db.json
-    mariadb: https://raw.githubusercontent.com/funilrys/PyFunceble/master/db_types/mariadb.sql
-    mysql: https://raw.githubusercontent.com/funilrys/PyFunceble/master/db_types/mysql.sql
-    psl: https://raw.githubusercontent.com/funilrys/PyFunceble/master/public-suffix.json
+    config: https://raw.githubusercontent.com/funilrys/PyFunceble/dev/.PyFunceble_production.yaml
+    dir_structure: https://raw.githubusercontent.com/funilrys/PyFunceble/dev/dir_structure_production.json
+    iana: https://raw.githubusercontent.com/funilrys/PyFunceble/dev/iana-domains-db.json
+    mariadb: https://raw.githubusercontent.com/funilrys/PyFunceble/dev/db_types/mariadb.sql
+    mysql: https://raw.githubusercontent.com/funilrys/PyFunceble/dev/db_types/mysql.sql
+    psl: https://raw.githubusercontent.com/funilrys/PyFunceble/dev/public-suffix.json
     repo: https://github.com/funilrys/PyFunceble
-    requirements: https://raw.githubusercontent.com/funilrys/PyFunceble/master/requirements.txt
-    sqlite: https://raw.githubusercontent.com/funilrys/PyFunceble/master/db_types/sqlite.sql
+    requirements: https://raw.githubusercontent.com/funilrys/PyFunceble/dev/requirements.txt
 local: false
 logs: true
 maximal_processes: 20
@@ -106,7 +107,6 @@ outputs:
         files:
             mariadb: mariadb.sql
             mysql: mysql.sql
-            sqlite: sqlite.sql
     default_files:
         dir_structure: dir_structure.json
         iana: iana-domains-db.json
@@ -114,7 +114,6 @@ outputs:
         mining: mining.json
         public_suffix: public-suffix.json
         results: results.txt
-        sqlite: pyfunceble.db
         whois_db: whois_db.json
     domains:
         directory: domains
@@ -191,6 +190,6 @@ travis_autosave_minutes: 10
 travis_branch: master
 unified: false
 user_agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)
-    Chrome/73.0.3683.86 Safari/537.36
+    Chrome/76.0.3809.100 Safari/537.36
 verify_ssl_certificate: false
 whois_database: true
