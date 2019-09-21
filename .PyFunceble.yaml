@@ -183,6 +183,7 @@ status:
         up: ACTIVE
         valid: VALID
 syntax: false
+timeout: 5
 travis: true
 travis_autosave_commit: '[Autosave][Dead-Hosts::repository-structure]'
 travis_autosave_final_commit: '[Final/Result][Dead-Hosts::repository-structure]'
