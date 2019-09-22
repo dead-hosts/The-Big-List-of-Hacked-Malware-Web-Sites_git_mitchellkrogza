@@ -141,7 +141,6 @@ outputs:
         directory: splited
 plain_list_domain: true
 quiet: false
-seconds_before_http_timeout: 6
 share_logs: false
 show_execution_time: false
 show_percentage: true
@@ -183,7 +182,7 @@ status:
         up: ACTIVE
         valid: VALID
 syntax: false
-timeout: 5
+timeout: 6
 travis: true
 travis_autosave_commit: '[Autosave][Dead-Hosts::repository-structure]'
 travis_autosave_final_commit: '[Final/Result][Dead-Hosts::repository-structure]'
