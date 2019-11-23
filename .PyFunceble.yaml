@@ -82,9 +82,9 @@ links:
     requirements: https://raw.githubusercontent.com/funilrys/PyFunceble/dev/requirements.txt
 local: false
 logs: true
-maximal_processes: 20
+maximal_processes: 2
 mining: false
-multiprocess: false
+multiprocess: true
 multiprocess_merging_mode: end
 no_files: false
 no_special: false
