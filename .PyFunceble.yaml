@@ -212,3 +212,4 @@ user_agent:
     platform: linux
 verify_ssl_certificate: false
 whois_database: true
+wildcard: false
