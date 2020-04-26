@@ -17,8 +17,8 @@ db_type: json
 debug: false
 dns_lookup_over_tcp: false
 dns_server:
-- 1.1.1.1
-- 1.0.0.1
+- 8.8.8.8
+- 8.4.4.8
 filter: ''
 generate_complements: false
 generate_hosts: true
@@ -152,7 +152,7 @@ outputs:
     splited:
         directory: splited
 plain_list_domain: true
-print_dots: false
+print_dots: true
 quiet: false
 reputation: false
 share_logs: false

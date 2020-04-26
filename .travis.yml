@@ -36,4 +36,3 @@ os:
 script:
 - dead_hosts_launcher --version
 - dead_hosts_launcher
-sudo: required
