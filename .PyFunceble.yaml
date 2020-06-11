@@ -155,6 +155,7 @@ plain_list_domain: true
 print_dots: true
 quiet: false
 reputation: false
+shadow_file: false
 share_logs: false
 show_execution_time: false
 show_percentage: true
