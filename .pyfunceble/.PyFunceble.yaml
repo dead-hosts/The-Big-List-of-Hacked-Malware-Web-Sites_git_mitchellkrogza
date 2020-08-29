@@ -84,8 +84,6 @@ links:
     dir_structure: https://raw.githubusercontent.com/funilrys/PyFunceble/dev/dir_structure_production.json
     iana: https://raw.githubusercontent.com/PyFunceble/iana/master/iana-domains-db.json
     ipv4_reputation: https://reputation.alienvault.com/reputation.data
-    mariadb: https://raw.githubusercontent.com/funilrys/PyFunceble/dev/db_types/mariadb.sql
-    mysql: https://raw.githubusercontent.com/funilrys/PyFunceble/dev/db_types/mysql.sql
     psl: https://raw.githubusercontent.com/PyFunceble/public-suffix/master/public-suffix.json
     repo: https://github.com/funilrys/PyFunceble
     requirements: https://raw.githubusercontent.com/funilrys/PyFunceble/dev/requirements.txt
@@ -114,11 +112,6 @@ outputs:
             up: active_and_merged_in_results
     complements:
         directory: complements
-    db_type:
-        directory: db_types
-        files:
-            mariadb: mariadb.sql
-            mysql: mysql.sql
     default_files:
         dir_structure: dir_structure.json
         iana: iana-domains-db.json
@@ -205,6 +198,7 @@ status:
         sane: SANE
         up: ACTIVE
         valid: VALID
+store_whois_record: false
 syntax: false
 timeout: 6
 unified: false
