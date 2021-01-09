@@ -1,7 +1,7 @@
 name: Authorization Checker
 on:
   schedule:
-    - cron: "*/30 * * * *"
+    - cron: "0 */4 * * *"
 
 env:
   PYFUNCEBLE_AUTO_CONFIGURATION: "YES"
