@@ -1,244 +1,254 @@
-# Enable / disable the adblock format decoding.
-adblock: False
-# Enable / disable a more aggresive decoding of the adblock format (WARNING: This is experimental)
-aggressive: False
-# Enable / disable the auto continue system.
-auto_continue: True
-# Set the command to run before each commit (except the final one).
-command: ""
-# Set the command to run before the final commit.
-command_before_end: ""
-# Set the number of seconds to wait between each test.
-cooldown_time: null
-# Set the custom IP to use when we generate a line in the hosts file format.
-custom_ip: "0.0.0.0"
-# Set the number of day(s) a subject has to stay in the inactive database before being cleaned.
-days_between_inactive_db_clean: 28
-# Set the number of day(s) between each retest of the INACTIVE and INVALID elements which are present into inactive_db.json
-days_between_db_retest: 1
-# Set the db type to use.
-db_type: json
-# Enable / disable the generation of debug file(s).
-debug: False
-# Enable / disable the DNS Lookup through the TCP protocol.
-dns_lookup_over_tcp: False
-# Set the DNS server to use. If None is given we use the one given by the OS.
-# Note:
-#   The following format is expected if you want to give custom dns server.
-#
-#       dns_server:
-#         - "8.8.8.8" # First DNS server.
-#         - "8.8.4.4" # Second DNS server.
-dns_server: null
-# Set the element to filter.
-filter: ""
-# Enable / disable the generation of complements.
-generate_complements: False
-# Enable / disable the generation of the hosts file(s).
-generate_hosts: True
-# Enable / Disable the generation of a JSON format for the output
-generate_json: False
-# Say to the system if the header has been already printed or not.
-header_printed: False
-# Tell to the system to use the historical sorting instead of the alphabetical sorting.
-hierarchical_sorting: False
-# Set the server to call to get the whois referer of a given element.
-iana_whois_server: whois.iana.org
-# Tell to the system to convert all domain to IDNA if possible.
-idna_conversion: False
-# Enable / Disable the usage of a database to store the INACTIVE and INVALID domain to retest overtime.
-inactive_database: True
-# Enable / Disable the output of every information of screen.
-less: True
-# Enable / Disable the test in local network.
-local: False
-# Enable / Disable the output of every logs.
-logs: True
-# Set the maximal number of simultaneous processes to run.
-maximal_processes: 25
-# Enable / Disable the URL/domain mining.
-mining: False
-# Enable / Disable the usage of multiple processes.
-multiprocess: False
-# Set the merging mode. Available: end, live
-multiprocess_merging_mode: end
-# Enable / Disable the generation of any file(s).
-no_files: False
-# Enable / Disable the usage of the SPECIAL rule(s).
-no_special: False
-# Enable / Disable the usage of whois in the tests.
-no_whois: False
-# Enable / Disable the generation of the plain list of element sorted by statuses.
-plain_list_domain: False
-# Enable / Disable the printing of dots in the output.
-print_dots: False
-# Enable / Disable the generation of output on screen.
-quiet: False
-# Enable/Disable the usage of the reputation data.
-use_reputation_data: False
-# Enable/Disable the reputation checking mode.
-# In this mode we only check against the reputation.
-reputation: False
-# Enable/Disable the support of RPZ policies.
-rpz: False
-# Enable / Disable the usage and generation of a shadow file before a file
-# test starts.
-shadow_file: False
-# Enable / disable the logs sharing.
+debug:
+  # Provides everything related to the debug mode.
+
+  # Activates the debug/logging.
+  active: False
+  # Sets the logging level.
+  level: info
+
+cli_decoding:
+  # Provides everything related to the decoding from the CLI.
+
+  # Activates the aggressive decoding.
+  adblock_aggressive: False
+
+  # Activates the decoding using the adblock decoder.
+  adblock: False
+
+  # Activates the decoding using the RPZ decoder.
+  rpz: False
+
+  # Activated the decoding using the Wildcard decoder.
+  wildcard: False
+
+cli_testing:
+  # Provides everything directly related to the CLI testing.
+
+  # Sets the Hosts IP to use while generation the hosts file(s)
+  hosts_ip: "0.0.0.0"
+
+  # Sets the number of maximal workers to use.
+  # If set to null, the system use: CPU Cores * 5.
+  max_workers: null
+
+  # Activates the automatic continuation after a break or shortage.
+  autocontinue: True
+
+  # Activates the storage and creation of a database of all INACTIVA and INVALID
+  # subjects for continuous testing.
+  inactive_db: True
+
+  # Activates the storage of some WHOIS information in order to avoid having
+  # to spam the WHOIS servers.
+  whois_db: True
+
+  # Activates the generation of complements.
+  complements: False
+
+  # Sets the cooldown time to apply between each tests.
+  cooldown_time: 0.0
+
+  # Sets the Database Connector type to use.
+  # Available: csv | mariadb | mysql
+  db_type: csv
+
+  # Sets the filter to apply while reading the given input.
+  # For example, if you give `\.info`, we will only test the subjects who match
+  # `\.info`.
+  file_filter: null
+
+  # Activates the mining of data.
+  mining: False
+
+  # Acknowleadges that we may test for local network component.
+  # NOTE: Activating this, will remove the syntax checker completely.
+  local_network: False
+
+  ci:
+    # Provides everything related to the Continuous integration.
+
+    # Activates the continuous integration mode.
+    # WARNING: Do not activate without asking or knowing what you are doing.
+    active: False
+
+    # Sets the commit message to apply everytime except for the last one.
+    commit_message: "PyFunceble - AutoSave"
+
+    # Sets the commit message to apply at the very end of the test.
+    end_commit_message: "PyFunceble - Results"
+
+    # Sets the number of minutes  to wait before starting to save and stop
+    # a session.
+    max_exec_minutes: 15
+
+    # Sets the working branch. This is the branch from where we are testing.
+    branch: master
+
+    # Sets the distribution branch. This is the branch that is going to get
+    # the (final) results.
+    distribution_branch: master
+
+    # Sets the command to execute everytime before each commits except the last
+    # one.
+    command: null
+
+    # Sets the command to execute before the last commit.
+    end_command: null
+
+  display_mode:
+    # Provides everything related to the disply mode.
+
+    # Activates the printing of dots.
+    dots: False
+
+    # Activates the printing of the execution time.
+    execution_time: False
+
+    # Activates the output of the percentage information.
+    percentage: True
+
+    # Activates the quiet mode.
+    quiet: False
+
+    # Activates the output of very few information.
+    less: True
+
+    # Activates the output of all information.
+    all: False
+
+    # Activates the output of the status and it's status (only)
+    simple: False
+
+    # Activates the coloration of stdout.
+    colour: True
+
+    # Sets the status do display to STDOUT.
+    # NOTE: This does not have any effect with the generated files.
+    # Available values: ALL | ACTIVE | INACTIVE | INVALID | SANE | MALICIOUS
+    status: all
+
+  testing_mode:
+    # Provides all available testing modes.
+    # WARNING: Only one can be used at a time.
+
+    # Activates the availability test.
+    availability: True
+
+    # Activates the syntax test.
+    syntax: False
+
+    # Activates the reputation test.
+    reputation: False
+
+  days_between:
+    # Provides everything which is x days periodic.
+
+    # NOT IMPLEMENTED (Anticipation for future usage).
+    db_clean: 28
+
+    # Provides the number of days to wait before retesting subject which were
+    # stored into the inactive database.
+    db_retest: 1
+
+  sorting_mode:
+    # Provides all our sorting mode.
+    # WARNING: The sorting mode is only applied to the files. NOT STDOUT.
+
+    # Activates the hierarchical sorting.
+    hierarchical: False
+    # Activates the standard sorting.
+    standard: True
+
+  file_generation:
+    # Provides everything related to the generation of file.
+
+    # Deactivates the generation of any status file.
+    no_file: False
+
+    # Activates the generation of the hosts file(s).
+    hosts: True
+
+    # Activates the generation of the plain (or raw) file(s).
+    plain: True
+
+    # Activates the generation of the analytic file(s).
+    analytic: True
+
+    # Activate the generation of an unified file for the copy of what is
+    # outputed to STDOUT.
+    unified_results: False
+
+lookup:
+  # Provides everything related to the lookup.
+
+  # Activates the usage of the DNS lookup.
+  dns: True
+
+  # Activates the usage of the HTTP status code lookup.
+  http_status_code: True
+
+  # Activates the usage of the network information socket.
+  netinfo: True
+
+  # Activates the usage of our special rules.
+  special: True
+
+  # Activates the usage of the WHOIS record.
+  whois: True
+
+  # Activates the usage of the reputation data reputation.
+  reputation: False
+
+  # Sets the timeout to apply to each of our lookup tools who support a timeout
+  # option.
+  timeout: 5
+
+dns:
+  # Provides everything related to the DNS lookup.
+
+  # Sets the list of server to communicate with.
+  # It must be a list.
+  # As example:
+  #   - first.dns
+  #   - second.dns
+  #
+  server: null
+
+  # Sets the protocol to use.
+  # Available: UDP | TCP | HTTPS | TLS
+  protocol: UDP
+
+# Not Implemented yet. Reserved for future usage and implementation.
 share_logs: False
-# Enable / disable the output of the execution time.
-show_execution_time: False
-# Enable / disable the output of the percentage of each statuses.
-show_percentage: True
-# Enable / disable the simple output mode.
-simple: False
-# Enable / disable the split of the results files.
-split: True
-# Enable / disable the storage of the whole WHOIS record.
-store_whois_record: False
-# Enable / disable the syntax checking mode.
-# In this mode we do not check for the availability. It's just syntax check.
-syntax: False
-# Set the timeout to apply when a timeout can be set.
-timeout: 5
-# Enable / disable the CI autosave system.
-ci: False
-# Set the default commit message we have to use when have to save but we did not finished the test.
-ci_autosave_commit: "PyFunceble - AutoSave"
-# Set the default final commit message we have to usve when have to save and we finished the test.
-ci_autosave_final_commit: "PyFunceble - Results"
-# Set the minimum of minutes we have to run before to automatically save our test results.
-ci_autosave_minutes: 15
-# Set the git branch where we are going to work from.
-ci_branch: master
-# Set the destination branch. The destination branch is the branch which will merge the travis_branch at the very end.
-# So for example:
-#   We have a `dev` branch which can be used as processing branch.
-#   We have a `master` branch (our distribution branch) which is used to distribute the results.
-ci_distribution_branch: master
-# Activate/Deactivate the generation of unified files for the results logs.
-unified: False
-# Set the default user agent use when requesting the HTTP code.
+
 user_agent:
+  # Provides everything related to the user agent choice.
+  # Note:
+  #   Please report to https://git.io/JLWe5 for more insight about the
+  #   browser and platform available..
+
   browser: chrome
   platform: linux
+
+  # Sets the user agent to use.
+  # WARNING: If given, this will be used systematically.
   custom: null
-# Enable / disable the verification of the certificate when testing for URL.
+
+# Activates the verification of the certificate.
 verify_ssl_certificate: False
-# Enable / disable the usage of a database to store the hash of the whois record
-whois_database: True
-# Enable / Disable the detection and test of wildcard subjects.
-wildcard: False
-
-outputs:
-  default_files:
-    dir_structure: dir_structure.json
-    iana: iana-domains-db.json
-    inactive_db: inactive_db.json
-    results: results.txt
-    public_suffix: public-suffix.json
-    mining: mining.json
-    whois_db: whois_db.json
-
-  domains:
-    directory: domains
-    filename: list
-
-  hosts:
-    directory: hosts
-    filename: hosts
-    ip_filename: ips
-
-  json:
-    directory: json
-    filename: dump.json
-
-  analytic:
-    directories:
-      parent: Analytic
-      potentially_down: POTENTIALLY_INACTIVE
-      potentially_up: POTENTIALLY_ACTIVE
-      up: ACTIVE
-      suspicious: SUSPICIOUS
-    filenames:
-      potentially_down: down_or_potentially_down
-      potentially_up: potentially_up
-      up: active_and_merged_in_results
-      suspicious: suspicious_and_merged_in_results
-
-  complements:
-    directory: complements
-
-  logs:
-    directories:
-      parent: logs
-      percentage: percentage
-    filenames:
-      auto_continue: continue.json
-      execution_time: execution_time.json
-      percentage: percentage.txt
-      whois: whois.json
-      date_format: date_format.json
-      no_referer: no_referer.json
-
-  # This is the main directory which we call output/ in all our communication.
-  parent_directory: output/
-
-  splited:
-    directory: splited
-
-status:
-  list:
-    valid:
-      - valid
-      - syntax_valid
-      - valid_syntax
-    up:
-      - up
-      - active
-    generic:
-      - generic
-    http_active:
-      - http_active
-    down:
-      - down
-      - inactive
-      - error
-    invalid:
-      - ouch
-      - invalid
-    potentially_down:
-      - potentially_down
-      - potentially_inactive
-    potentially_up:
-      - potentially_up
-      - potentially_active
-    suspicious:
-      - strange
-      - suspicious
-      - hum
-    malicious:
-      - malicious
-      - bad_actor
-    sane:
-      - sane
-      - safe
-    not_malicious:
-  official:
-    up: ACTIVE
-    down: INACTIVE
-    invalid: INVALID
-    valid: VALID
-    malicious: MALICIOUS
-    sane: SANE
 
 http_codes:
-  active: True
-  not_found_default: "XXX"
+  # Provides everything related to the HTTP code lookup interpretation.
+
+  # Informs PyFunceble that the end-user (not PyFunceble) is managing this list.
+  # This means that you won't get any update in this section.
+  self_managed: False
+
   list:
     up:
       - 100
       - 101
+      - 102
       - 200
       - 201
       - 202
@@ -246,10 +256,13 @@ http_codes:
       - 204
       - 205
       - 206
+      - 207
+      - 208
+      - 226
+      - 429
     potentially_down:
       - 400
       - 402
-      - 403
       - 404
       - 409
       - 410
@@ -257,6 +270,7 @@ http_codes:
       - 414
       - 415
       - 416
+      - 451
     potentially_up:
       - 000
       - 300
@@ -266,6 +280,7 @@ http_codes:
       - 304
       - 305
       - 307
+      - 308
       - 403
       - 405
       - 406
@@ -274,21 +289,29 @@ http_codes:
       - 411
       - 413
       - 417
+      - 418
+      - 421
+      - 422
+      - 423
+      - 424
+      - 426
+      - 428
+      - 431
       - 500
       - 501
       - 502
       - 503
       - 504
       - 505
+      - 506
+      - 507
+      - 508
+      - 510
+      - 511
 
 links:
+  # Provides some of our API links.
+  # NOTE: Not implemented yet as the underlaying infrastructure will be
+  # rewritten.
   api_date_format: "https://pyfunceble.funilrys.com/api/date-format"
   api_no_referer: "https://pyfunceble.funilrys.com/api/no-referer"
-  config: "https://raw.githubusercontent.com/funilrys/PyFunceble/dev/.PyFunceble_production.yaml"
-  dir_structure: "https://raw.githubusercontent.com/funilrys/PyFunceble/dev/dir_structure_production.json"
-  iana: "https://raw.githubusercontent.com/PyFunceble/iana/master/iana-domains-db.json"
-  ipv4_reputation: "https://reputation.alienvault.com/reputation.data"
-  psl: "https://raw.githubusercontent.com/PyFunceble/public-suffix/master/public-suffix.json"
-  repo: "https://github.com/funilrys/PyFunceble"
-  requirements: "https://raw.githubusercontent.com/funilrys/PyFunceble/dev/requirements.txt"
-  user_agents: "https://raw.githubusercontent.com/PyFunceble/user_agents/master/user_agents.json"
