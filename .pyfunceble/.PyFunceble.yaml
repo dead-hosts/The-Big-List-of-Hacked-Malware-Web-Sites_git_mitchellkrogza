@@ -42,7 +42,7 @@ cli_testing:
     local_network: false
     max_workers: 1
     mining: false
-    preload_file: false
+    preload_file: true
     sorting_mode:
         hierarchical: false
         standard: true
