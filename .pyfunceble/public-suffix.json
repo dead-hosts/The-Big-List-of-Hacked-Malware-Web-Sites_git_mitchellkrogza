@@ -180,7 +180,8 @@
         "netlify.app",
         "northflank.app",
         "telebit.app",
-        "vercel.app"
+        "vercel.app",
+        "bookonline.app"
     ],
     "ar": [
         "com.ar",
@@ -1392,11 +1393,14 @@
         "wafflecell.com",
         "idnblogger.com",
         "indowapblog.com",
+        "reserve-online.com",
+        "hotelwithflight.com",
         "remotewd.com",
         "pages.wiardweb.com",
         "woltlab-demo.com",
         "wpenginepowered.com",
         "js.wpenginepowered.com",
+        "wixsite.com",
         "xnbay.com",
         "u2.xnbay.com",
         "u2-local.xnbay.com",
@@ -2164,6 +2168,7 @@
         "cust.testing.thingdust.io",
         "2038.io",
         "wedeploy.io",
+        "editorx.io",
         "basicserver.io",
         "virtualserver.io"
     ],
@@ -4729,10 +4734,10 @@
         "barsy.me",
         "mcpe.me",
         "mcdir.me",
-        "brasilia.me",
         "nctu.me",
         "soundcast.me",
         "tcp4.me",
+        "brasilia.me",
         "ddns.me",
         "dnsfor.me",
         "hopto.me",
@@ -5641,6 +5646,7 @@
         "torproject.net",
         "pages.torproject.net",
         "fastblog.net",
+        "reserve-online.net",
         "community-pro.net",
         "meinforum.net",
         "yandexcloud.net",
@@ -8150,10 +8156,10 @@
         "edu.vu",
         "net.vu",
         "org.vu",
+        "cn.vu",
         "blog.vu",
         "dev.vu",
-        "me.vu",
-        "cn.vu"
+        "me.vu"
     ],
     "win": [
         "that.win"
