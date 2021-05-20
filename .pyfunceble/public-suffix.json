@@ -3136,7 +3136,6 @@
         "iwaizumi.iwate.jp",
         "iwaki.fukushima.jp",
         "iwakuni.yamaguchi.jp",
-        "iwakura.aichi.jp",
         "iwama.ibaraki.jp",
         "iwamizawa.hokkaido.jp",
         "iwanai.hokkaido.jp",
@@ -4558,6 +4557,7 @@
         "edu.ki",
         "gov.ki",
         "info.ki",
+        "iwakura.aichi.jp",
         "net.ki",
         "org.ki"
     ],
