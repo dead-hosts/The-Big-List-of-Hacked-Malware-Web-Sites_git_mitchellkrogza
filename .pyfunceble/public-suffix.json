@@ -421,6 +421,7 @@
         "org.bm"
     ],
     "bn": [
+        "co.bn",
         "com.bn",
         "edu.bn",
         "gov.bn",
@@ -5626,7 +5627,6 @@
         "cloudfunctions.net",
         "cloudjiffy.net",
         "cloudycluster.net",
-        "co.bn",
         "community-pro.net",
         "cryptonomic.net",
         "dattolocal.net",
