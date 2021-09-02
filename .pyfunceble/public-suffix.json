@@ -2766,6 +2766,7 @@
         "arakawa.saitama.jp",
         "arakawa.tokyo.jp",
         "arao.kumamoto.jp",
+        "arboretum.museum",
         "ariake.saga.jp",
         "arida.wakayama.jp",
         "aridagawa.wakayama.jp",
@@ -7430,6 +7431,7 @@
     ],
     "ro": [
         "arts.ro",
+        "barsy.ro",
         "blogspot.ro",
         "co.ro",
         "com.ro",
@@ -7512,7 +7514,8 @@
         "development.run",
         "hs.run",
         "ravendb.run",
-        "repl.run"
+        "repl.run",
+        "servers.run"
     ],
     "rw": [
         "ac.rw",
