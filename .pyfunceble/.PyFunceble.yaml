@@ -42,7 +42,7 @@ cli_testing:
     hosts_ip: 0.0.0.0
     inactive_db: true
     local_network: false
-    max_workers: 1
+    max_workers: null
     mining: false
     preload_file: true
     sorting_mode:
@@ -53,6 +53,9 @@ cli_testing:
         reputation: false
         syntax: false
     whois_db: true
+collection:
+    push: true
+    url_base: https://collection.dead-hosts.funilrys.com
 debug:
     active: false
     level: info
@@ -134,6 +137,7 @@ links:
     api_date_format: https://pyfunceble.funilrys.com/api/date-format
     api_no_referrer: https://pyfunceble.funilrys.com/api/no-referrer
 lookup:
+    collection: true
     dns: true
     http_status_code: true
     netinfo: true
