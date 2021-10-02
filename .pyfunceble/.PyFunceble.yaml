@@ -16,7 +16,7 @@ cli_testing:
         max_exec_minutes: 20
     cidr_expand: false
     complements: false
-    cooldown_time: 3.25
+    cooldown_time: 0.2
     days_between:
         db_clean: 28
         db_retest: 1
@@ -44,7 +44,7 @@ cli_testing:
     local_network: false
     max_workers: null
     mining: false
-    preload_file: true
+    preload_file: false
     sorting_mode:
         hierarchical: false
         standard: true
@@ -54,6 +54,7 @@ cli_testing:
         syntax: false
     whois_db: true
 collection:
+    preferred_status_origin: frequent
     push: true
     url_base: https://collection.dead-hosts.funilrys.com
 debug:
