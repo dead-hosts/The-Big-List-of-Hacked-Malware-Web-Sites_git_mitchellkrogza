@@ -5,6 +5,7 @@ cli_decoding:
     wildcard: false
 cli_testing:
     autocontinue: true
+    chancy_tester: true
     ci:
         active: true
         branch: master
@@ -27,8 +28,10 @@ cli_testing:
         dots: true
         execution_time: true
         less: false
+        max_registrar: 15
         percentage: true
         quiet: false
+        registrar: false
         simple: false
         status: all
     file_filter: null
@@ -42,7 +45,7 @@ cli_testing:
     hosts_ip: 0.0.0.0
     inactive_db: true
     local_network: false
-    max_workers: null
+    max_workers: 5
     mining: false
     preload_file: false
     sorting_mode:
@@ -54,7 +57,7 @@ cli_testing:
         syntax: false
     whois_db: true
 collection:
-    preferred_status_origin: frequent
+    preferred_status_origin: recommended
     push: true
     url_base: https://collection.dead-hosts.funilrys.com
 debug:
@@ -146,6 +149,12 @@ lookup:
     special: true
     timeout: 5
     whois: true
+max_http_retries: 3
+proxy:
+    global:
+        http: null
+        https: null
+    rules: []
 share_logs: false
 user_agent:
     browser: chrome

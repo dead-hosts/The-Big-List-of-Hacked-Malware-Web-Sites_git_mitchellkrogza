@@ -39,8 +39,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install dead-hosts-launcher
-          pip uninstall -y PyFunceble-dev
-          pip install --upgrade "PyFunceble-dev @ git+https://github.com/funilrys/PyFunceble.git@collection-dev"
+          pip install --upgrade --pre PyFunceble-dev
 
       - name: Get PyFunceble version
         run: |
