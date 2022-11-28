@@ -2,6 +2,7 @@ name: Authorization Checker
 on:
   schedule:
     - cron: "0 5 * * *"
+  workflow_dispatch: {}
 
 env:
   PYFUNCEBLE_AUTO_CONFIGURATION: "YES"
@@ -29,18 +30,24 @@ jobs:
         with:
           token: "${{ secrets.BOT_REPO_PAT }}"
 
-      - name: Create local change
-        run: |
-          date +%s > "${{ github.workspace }}/.trigger"
-
-      - name: Commit changes
-        run: |
-          git config --local user.email "$GIT_EMAIL"
-          git config --local user.name "$GIT_NAME"
-          git commit -m "[Dead-Hosts::Infrastructure][AuthChecker]" -a
-
-      - name: Push changes
-        uses: ad-m/github-push-action@master
+      - name: Set up Python ${{ matrix.python_version }}
+        uses: actions/setup-python@v4
         with:
-          github_token: ${{ secrets.BOT_REPO_PAT }}
-          branch: ${{ github.ref }}
+          python-version: ${{ matrix.python_version }}
+
+      - name: Install dependencies
+        run: |
+          pip install dead-hosts-launcher
+          pip install --upgrade PyFunceble-dev
+
+      - name: Get PyFunceble version
+        run: |
+          PyFunceble --version
+
+      - name: Get Launcher version
+        run: |
+          dead-hosts-launcher --version
+
+      - name: Run Launcher
+        run: |
+          dead-hosts-launcher --authorize
