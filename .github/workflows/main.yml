@@ -13,9 +13,9 @@ env:
   GIT_DISTRIBUTION_BRANCH: "${{ github.head_ref || github.ref_name }}"
   PYFUNCEBLE_CONFIG_DIR: "${{ github.workspace }}/.pyfunceble"
   GITHUB_TOKEN: "${{ secrets.BOT_REPO_PAT }}"
-  DEV_PLATFORM_API_URL: "${{ secrets.DEV_PLATFORM_API_URL }}"
-  DEV_PLATFORM_API_TOKEN: "${{ secrets.DEV_PLATFORM_API_TOKEN }}"
-  DEV_PLATFORM_SCOPE: "${{ secrets.DEV_PLATFORM_SCOPE }}"
+  PLATFORM_API_URL: "${{ secrets.PLATFORM_API_URL }}"
+  PLATFORM_API_TOKEN: "${{ secrets.PLATFORM_API_TOKEN }}"
+  PLATFORM_SCOPE: "${{ secrets.PLATFORM_SCOPE }}"
 
 jobs:
   single:
