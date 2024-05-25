@@ -6,6 +6,7 @@ on:
 
 env:
   PYFUNCEBLE_AUTO_CONFIGURATION: "YES"
+  DEBUG_PYFUNCEBLE_ON_SCREEN: "YES"
   GIT_NAME: "${{ secrets.GIT_BOT_NAME }}"
   GIT_EMAIL: "${{ secrets.GIT_BOT_EMAIL }}"
   GIT_BRANCH: "${{ github.head_ref || github.ref_name }}"
