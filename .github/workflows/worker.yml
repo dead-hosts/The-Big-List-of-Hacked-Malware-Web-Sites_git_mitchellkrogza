@@ -1,16 +1,15 @@
 name: Platform Worker
 on:
-  # schedule:
-  #   - cron: "0 */1 * * *"
+  schedule:
+    - cron: "0 */1 * * *"
   workflow_dispatch: {}
 
 env:
   PYFUNCEBLE_AUTO_CONFIGURATION: "YES"
-  DEBUG_PYFUNCEBLE_ON_SCREEN: "YES"
   GIT_NAME: "${{ secrets.GIT_BOT_NAME }}"
   GIT_EMAIL: "${{ secrets.GIT_BOT_EMAIL }}"
-  GIT_BRANCH: "${{ github.head_ref || github.ref_name }}"
-  GIT_DISTRIBUTION_BRANCH: "${{ github.head_ref || github.ref_name }}"
+  GIT_BRANCH: "worker"
+  GIT_DISTRIBUTION_BRANCH: "worker"
   PYFUNCEBLE_CONFIG_DIR: "${{ github.workspace }}/.pyfunceble"
   GITHUB_TOKEN: "${{ secrets.BOT_REPO_PAT }}"
   PLATFORM_API_URL: "${{ secrets.PLATFORM_API_URL }}"
@@ -58,4 +57,4 @@ jobs:
 
       - name: Run Launcher
         run: |
-          dead-hosts-launcher -d
+          dead-hosts-launcher

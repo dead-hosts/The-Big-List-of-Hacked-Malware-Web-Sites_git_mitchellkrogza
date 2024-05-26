@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - "*"
+      - "!worker"
   workflow_dispatch: {}
 
 env:
@@ -56,4 +57,4 @@ jobs:
 
       - name: Run Launcher
         run: |
-          dead-hosts-launcher -d
+          dead-hosts-launcher
