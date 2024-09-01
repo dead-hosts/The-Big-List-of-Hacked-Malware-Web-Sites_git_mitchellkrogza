@@ -44,8 +44,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install --pre git+https://github.com/dead-hosts/infrastructure-launcher.git@dev
-          pip install --upgrade PyFunceble-dev
+          pip install dead-hosts-launcher~=2.3.0
 
       - name: Get PyFunceble version
         run: |
